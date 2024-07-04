@@ -27,13 +27,16 @@ class Signup extends Databasehandler
     {
         // Error handlers
         if ($this->isEmptySubmit()) {
-            $this->signup_errors[] = 'empty_fields';
+            $this->signup_errors[] = 'The fields are empty';
         }
         if ($this->invalidEmail()) {
-            $this->signup_errors[] = 'invalid_email';
+            $this->signup_errors[] = 'The email is invalid';
         }
         if ($this->emailTaken()) {
-            $this->signup_errors[] = 'email_taken';
+            $this->signup_errors[] = 'The email belongs to another user';
+        }
+        if (!$this->isPasswordComplex($this->pwd)) {
+            $this->signup_errors[] = 'The password must be more than 5 characters and include numbers';
         }
         if (!empty($this->signup_errors)) {
             $_SESSION['signup_errors'] = $this->signup_errors;
@@ -44,7 +47,7 @@ class Signup extends Databasehandler
         $this->insertUser();
         // Optionally, set a success message or similar
         $_SESSION['signup_success'] = 'true';
-        header("Location: ../home.php");
+        header("Location: ../index.php");
         exit();
     }
 
@@ -76,4 +79,7 @@ class Signup extends Databasehandler
 
         return $statement->rowCount() > 0;
     }
+    private function isPasswordComplex($password) {
+    return strlen($password) > 5 && preg_match('/\d/', $password);
+}
 }

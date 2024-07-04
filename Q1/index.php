@@ -63,7 +63,7 @@ session_start();
                 <?php endforeach; ?>
                 <?php unset($_SESSION['signup_errors']); ?>
             <?php endif; ?>
-            <form action="includes/signup.inc.php" method="post">
+            <form action="includes/signup.inc.php" method="post" id="signupForm">
                 <h2>Create your Account</h2>
                 <label>
                     <span>Email</span>
@@ -71,7 +71,7 @@ session_start();
                 </label>
                 <label>
                     <span>Password</span>
-                    <input type="password" name="pwd"/>
+                    <input type="password" name="pwd" id="pwd"/>
                 </label>
                 <button type="submit" class="submit">Sign Up</button>
             </form>
@@ -91,6 +91,14 @@ session_start();
         document.querySelector('.img__btn').addEventListener('click', function () {
             document.querySelector('.cont').classList.toggle('s--signup');
         });
-    });</script>
+        document.getElementById('signupForm').addEventListener('submit', function (event) {
+            let password = document.getElementById('pwd').value;
+            if (password.length <= 5 || !/\d/.test(password)) {
+                alert('Password must be more than five characters and include numbers.');
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    });
+</script>
 </body>
 </html>
