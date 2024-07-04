@@ -1,10 +1,11 @@
 <?php
+        session_start(); // Ensure session is started
 
 class Signup extends Databasehandler
 {
     private $email;
     private $pwd;
-
+    private $signup_errors = [];
     public function __construct($email, $pwd)
     {
         $this->email = $email;
@@ -26,50 +27,40 @@ class Signup extends Databasehandler
     {
         // Error handlers
         if ($this->isEmptySubmit()) {
-            header("Location: /index.php");
-//            header("Location: /index.php?error=empty_fields");
-            die();
+            $this->signup_errors[] = 'empty_fields';
         }
         if ($this->invalidEmail()) {
-//            header("Location: /index.php?error=invalid_email");
-            header("Location: /index.php");
-            die();
+            $this->signup_errors[] = 'invalid_email';
         }
         if ($this->emailTaken()) {
-//            header("Location: /index.php?error=email_taken");
-            header("Location: /index.php");
-            die();
+            $this->signup_errors[] = 'email_taken';
+        }
+        if (!empty($this->signup_errors)) {
+            $_SESSION['signup_errors'] = $this->signup_errors;
+            header("Location: ../index.php");
+            exit();
         }
         // If no errors, signup user
         $this->insertUser();
-
+        // Optionally, set a success message or similar
+        $_SESSION['signup_success'] = 'true';
+        header("Location: ../home.php");
+        exit();
     }
 
     private function isEmptySubmit()
     {
-        if (isset($this->email) && isset($this->pwd)) {
-            return false;
-        } else {
-            return true;
-        }
+        return empty($this->email) || empty($this->pwd);
     }
 
     private function invalidEmail()
     {
-        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !filter_var($this->email, FILTER_VALIDATE_EMAIL);
     }
 
     private function emailTaken()
     {
-        if (!$this->checkUser($this->email)) {
-            return false;
-        } else {
-            return true;
-        }
+        return $this->checkUser($this->email);
     }
 
     private function checkUser($email)
@@ -77,19 +68,12 @@ class Signup extends Databasehandler
         $query = "SELECT * FROM users WHERE email_address = :email";
         $statement = $this->connect()->prepare($query);
 
-        if (!$statement->execute(array($email))) {
-            $statement = null;
-//            header('Location: /index.php?error=statement_failed');
+        if (!$statement->execute([':email' => $email])) {
+            $_SESSION['error'] = 'database_error'; // Handle database execution errors
             header("Location: /index.php");
             exit();
         }
 
-        if ($statement->rowCount() > 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return $statement->rowCount() > 0;
     }
-
-
 }
