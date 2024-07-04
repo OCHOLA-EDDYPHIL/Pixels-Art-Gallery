@@ -80,13 +80,8 @@ session_start();
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
         // This ensures the DOM is fully loaded before attempting to access elements
-        let hasSignupErrors = <?php echo !empty($_SESSION['signup_errors']) ? 'true' : 'false'; ?>;
-
-        if (hasSignupErrors) {
-            document.querySelector('.cont').classList.add('s--signup');
-        }
+    document.addEventListener('DOMContentLoaded', function () {
 
         document.querySelector('.img__btn').addEventListener('click', function () {
             document.querySelector('.cont').classList.toggle('s--signup');
