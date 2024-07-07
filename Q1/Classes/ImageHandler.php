@@ -1,6 +1,6 @@
 <?php
 
-class ImageUploader extends Databasehandler
+class ImageHandler extends Databasehandler
 {
     private $targetDir;
     private $maxFileSize = 10000000; // 10MB
@@ -96,4 +96,34 @@ class ImageUploader extends Databasehandler
         }
     }
 
+    public function deleteImage($filename, $email)
+{
+    // Verify that the user is the uploader
+    $sql = "SELECT * FROM photos WHERE filename = ? AND user_id = ?";
+    $stmt = $this->connect()->prepare($sql);
+    $stmt->execute([$filename, $email]);
+    $image = $stmt->fetch();
+
+    if (!$image) {
+        return "You do not have permission to delete this image or it does not exist.";
+    }
+
+    // Delete the record from the database
+    $sql = "DELETE FROM photos WHERE filename = ? AND user_id = ?";
+    $stmt = $this->connect()->prepare($sql);
+    $deleteSuccess = $stmt->execute([$filename, $email]);
+
+    if ($deleteSuccess) {
+        // Delete the file from the server
+        $filePath = $this->targetDir . $filename;
+        if (file_exists($filePath)) {
+            unlink($filePath);
+            return "Image deleted successfully.";
+        } else {
+            return "Image file not found on the server.";
+        }
+    } else {
+        return "Error deleting image from database.";
+    }
+}
 }
