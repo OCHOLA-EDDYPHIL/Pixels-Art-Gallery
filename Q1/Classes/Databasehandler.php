@@ -6,6 +6,11 @@ class Databasehandler{
     private $username = "root";
     private $password = "";
 
+    public function __construct()
+    {
+        // Constructor is empty because no initialization is needed
+    }
+
     protected function connect()
     {
         try {
@@ -17,5 +22,17 @@ class Databasehandler{
             die("Connection failed: " . $e->getMessage());
         }
     }
+    public function getUserIdByEmail($email) {
+    $sql = "SELECT email_address FROM users WHERE email_address = ?";
+    $stmt = $this->connect()->prepare($sql);
+    $stmt->bindValue(1, $email);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($result) {
+        return $result['email_address'];
+    } else {
+        return null;
+    }
+}
 
 }
