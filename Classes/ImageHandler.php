@@ -78,7 +78,7 @@ class ImageHandler extends Databasehandler
     private function generateUniqueFileName($fileName)
     {
         $imageFileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        return uniqid() . '.' . $imageFileType;
+        return uniqid() . 'Classes' . $imageFileType;
     }
 
     public function storeCaptionInDB($fileName, $caption, $email)
