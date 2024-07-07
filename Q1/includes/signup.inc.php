@@ -10,6 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $signup = new Signup($email, $pwd);
     $signup->signupUser();
 
-//    header("location: ".$_SERVER['DOCUMENT_ROOT']."/index.php?success");
+//    header("location: ".$_SERVER['DOCUMENT_ROOT']."../index.php?success");
 
 }

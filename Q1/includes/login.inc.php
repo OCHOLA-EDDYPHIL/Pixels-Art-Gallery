@@ -11,6 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Login->loginUser();
 
 
-//    header("location: ".$_SERVER['DOCUMENT_ROOT']."/index.php?success");
+//    header("location: ".$_SERVER['DOCUMENT_ROOT']."../index.php?success");
 
 }

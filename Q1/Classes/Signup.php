@@ -15,7 +15,7 @@ class Signup extends Databasehandler
     private function insertUser()
     {
         $query = "INSERT INTO users(email_address, pwd) VALUES(:email, :pwd)";
-        $statement = $this->connect()->prepare($query);
+        $statement = Databasehandler::getInstance()->connect()->prepare($query);
 
         $hashedPwd = password_hash($this->pwd, PASSWORD_DEFAULT);
         $statement->bindParam(':email', $this->email);
@@ -68,12 +68,12 @@ class Signup extends Databasehandler
 
     private function checkUser($email)
     {
-        $query = "SELECT * FROM users WHERE email_address = :email";
-        $statement = $this->connect()->prepare($query);
+        $query = "SELECT email_address FROM users WHERE email_address = :email";
+        $statement = Databasehandler::getInstance()->connect()->prepare($query);
 
         if (!$statement->execute([':email' => $email])) {
             $_SESSION['error'] = 'database_error'; // Handle database execution errors
-            header("Location: /index.php");
+            header("Location: ../index.php");
             exit();
         }
 

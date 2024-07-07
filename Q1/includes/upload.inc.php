@@ -15,16 +15,16 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 require_once '../Classes/Databasehandler.php';
-require_once '../Classes/ImageUploader.php';
+require_once '../Classes/ImageHandler.php';
 
 if (isset($_POST['submit']) && isset($_FILES['fileToUpload'])) {
-    $dbHandler = new Databasehandler();
-    $imageUploader = new ImageUploader($dbHandler);
+    $dbHandler = Databasehandler::getInstance();
+    $imageUploader = new ImageHandler($dbHandler);
 
     $file = $_FILES['fileToUpload'];
     $caption = isset($_POST['caption']) ? $_POST['caption'] : 'No cap'; // Default to an empty string if caption is not set
     $email = $_SESSION['email']; // Assuming the user is logged in and the email is stored in the session
-    $userId = $dbHandler->getUserIdByEmail($email); // Get the user ID from the email
+    $userId = $dbHandler->getUserEmail($email); // Get the user ID from the email
 
     if (!$userId) {
         // Redirect back or show an error message

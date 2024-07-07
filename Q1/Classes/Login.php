@@ -42,7 +42,7 @@ class Login extends Databasehandler
     private function getUser()
     {
         $query = "SELECT pwd FROM users WHERE email_address = :email";
-        $statement = $this->connect()->prepare($query);
+        $statement = Databasehandler::getInstance()->connect()->prepare($query);
         $statement->bindParam(':email', $this->email);
         $statement->execute();
 
