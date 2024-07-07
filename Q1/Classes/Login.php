@@ -30,7 +30,7 @@ class Login extends Databasehandler
         }
 
         $_SESSION['email'] = $this->email;
-        header("Location: ../upload.php");
+        header("Location: ../main.php");
         exit();
     }
 
