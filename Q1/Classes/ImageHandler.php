@@ -24,7 +24,7 @@ class ImageUploader extends Databasehandler
         }
         $uploadResult = $this->uploadImage($file);
         if (is_array($uploadResult) && $uploadResult['success']) {
-            $user_id = $this->getUserIdByEmail($email);
+            $user_id = $this->getUserEmail($email);
             return $this->storeCaptionInDB($uploadResult['fileName'], $caption, $email);
         } else {
             return $uploadResult;
@@ -35,7 +35,7 @@ class ImageUploader extends Databasehandler
     private function checkUserExists($email)
     {
         $sql = "SELECT * FROM users WHERE email_address = ?";
-        $stmt = $this->connect()->prepare($sql);
+        $stmt = Databasehandler::getInstance()->connect()->prepare($sql);
         $stmt->execute([$email]);
         return $stmt->rowCount() > 0;
     }
@@ -89,8 +89,8 @@ class ImageUploader extends Databasehandler
         $stmt->bindParam(2, $caption, PDO::PARAM_STR);
         $stmt->bindParam(3, $email, PDO::PARAM_STR);
         if ($stmt->execute()) {
-            return "New record created successfully";
-            header('Location: ../main.php');
+            header('Location: ../main.php');  // Redirects after a successful upload
+            exit();
         } else {
             return "Error: " . $stmt->errorInfo()[2];
         }
