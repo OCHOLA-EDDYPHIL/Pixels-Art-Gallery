@@ -64,11 +64,6 @@ $pdo = $dbHandler->connect();
             echo "Error: " . $e->getMessage();
         }
         ?>
-<!--        <article>-->
-<!--            <a class="thumbnail" href="images/fulls/04.jpg"><img src="images/thumbs/04.jpg" alt=""/></a>-->
-<!--            <h2>Donec maximus nisi eget</h2>-->
-<!--            <p>Tristique in nulla vel congue. Sed sociis natoque parturient nascetur.</p>-->
-<!--        </article>-->
     </section>
 
     <!-- Footer -->
