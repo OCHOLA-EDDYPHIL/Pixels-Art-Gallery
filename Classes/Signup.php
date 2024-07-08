@@ -1,26 +1,18 @@
 <?php
-        session_start(); // Ensure session is started
+session_start(); // Ensure session is started
 
+require_once 'Databasehandler.php'; // Include the Databasehandler class
 class Signup extends Databasehandler
 {
     private $email;
     private $pwd;
     private $signup_errors = [];
+
     public function __construct($email, $pwd)
     {
+        parent::__construct(); // Ensure database connection and base table creation
         $this->email = $email;
         $this->pwd = $pwd;
-    }
-
-    private function insertUser()
-    {
-        $query = "INSERT INTO users(email_address, pwd) VALUES(:email, :pwd)";
-        $statement = Databasehandler::getInstance()->connect()->prepare($query);
-
-        $hashedPwd = password_hash($this->pwd, PASSWORD_DEFAULT);
-        $statement->bindParam(':email', $this->email);
-        $statement->bindParam(':pwd', $hashedPwd);
-        $statement->execute();
     }
 
     public function signupUser()
@@ -79,7 +71,20 @@ class Signup extends Databasehandler
 
         return $statement->rowCount() > 0;
     }
-    private function isPasswordComplex($password) {
-    return strlen($password) > 5 && preg_match('/\d/', $password);
-}
+
+    private function isPasswordComplex($password)
+    {
+        return strlen($password) > 5 && preg_match('/\d/', $password);
+    }
+
+    private function insertUser()
+    {
+        $query = "INSERT INTO users(email_address, pwd) VALUES(:email, :pwd)";
+        $statement = Databasehandler::getInstance()->connect()->prepare($query);
+
+        $hashedPwd = password_hash($this->pwd, PASSWORD_DEFAULT);
+        $statement->bindParam(':email', $this->email);
+        $statement->bindParam(':pwd', $hashedPwd);
+        $statement->execute();
+    }
 }

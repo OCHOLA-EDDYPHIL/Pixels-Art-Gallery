@@ -1,48 +1,59 @@
 <?php
 
 /**
- * Class Databasehandler
- *
- * This class is responsible for handling database connections and operations.
- * It implements the Singleton pattern to ensure that only one instance of the database connection exists throughout the application.
+ * Handles database operations, ensuring the database and required tables exist.
+ * Utilizes the Singleton pattern to ensure only one instance of the connection is created.
  */
 class Databasehandler
 {
-    /**
-     * @var Databasehandler|null The single instance of the Databasehandler class.
-     */
-    private static $instance = null;
+    private static $instance = null; // Holds the singleton instance
+    private $host = "localhost"; // Database host
+    private $dbname = "project"; // Database name
+    private $username = "root"; // Database username
+    private $password = ""; // Database password
+    private $pdo; // PDO instance for database connection
 
     /**
-     * @var string Database host.
-     */
-    private $host = "localhost";
-
-    /**
-     * @var string Database name.
-     */
-    private $dbname = "SemesterProject";
-
-    /**
-     * @var string Database user.
-     */
-    private $username = "root";
-
-    /**
-     * @var string Database password.
-     */
-    private $password = "";
-
-    /**
-     * @var PDO The PDO instance for database connection.
-     */
-    private $pdo;
-
-    /**
-     * The constructor is protected to prevent creating a new instance outside of the class.
-     * It initializes the PDO connection to the database.
+     * Constructor is protected to prevent creating a new instance outside of the class.
+     * Initializes the database by checking/creating the database and tables.
      */
     protected function __construct()
+    {
+        $this->checkAndCreateDatabase();
+        $this->connectToDb();
+        $this->checkAndCreateTable("users", "CREATE TABLE IF NOT EXISTS users (
+            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            email_address VARCHAR(50) NOT NULL,
+            pwd VARCHAR(255) NOT NULL,
+            reg_date TIMESTAMP
+        )");
+        $this->checkAndCreateTable("photos", "CREATE TABLE IF NOT EXISTS photos (
+            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            filename VARCHAR(255) NOT NULL,
+            caption TEXT,
+            user_id INT(6) UNSIGNED,
+            FOREIGN KEY (user_id) REFERENCES users(email_address) 
+        )");
+    }
+
+    /**
+     * Checks and creates the database if it does not exist.
+     */
+    private function checkAndCreateDatabase()
+    {
+        try {
+            $pdo = new PDO("mysql:host=$this->host", $this->username, $this->password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS $this->dbname");
+        } catch (PDOException $e) {
+            die("DB creation failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Establishes a connection to the database.
+     */
+    private function connectToDb()
     {
         try {
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->username, $this->password);
@@ -53,7 +64,22 @@ class Databasehandler
     }
 
     /**
-     * Returns the singleton instance of the Databasehandler class.
+     * Checks and creates a table if it does not exist.
+     *
+     * @param string $tableName The name of the table to check/create.
+     * @param string $tableSql The SQL statement to create the table.
+     */
+    protected function checkAndCreateTable($tableName, $tableSql)
+    {
+        try {
+            $this->pdo->exec($tableSql);
+        } catch (PDOException $e) {
+            die("Creation of table {$tableName} failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Returns the singleton instance of the Databasehandler.
      *
      * @return Databasehandler The singleton instance.
      */
@@ -66,27 +92,7 @@ class Databasehandler
     }
 
     /**
-     * Retrieves the email address of a user from the database.
-     *
-     * @param string $email The email address to search for.
-     * @return string|null The email address if found, null otherwise.
-     */
-    public function getUserEmail($email)
-    {
-        $sql = "SELECT email_address FROM users WHERE email_address = ?";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->bindValue(1, $email);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            return $result['email_address'];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Provides the PDO connection instance.
+     * Provides access to the PDO connection.
      *
      * @return PDO The PDO connection instance.
      */
