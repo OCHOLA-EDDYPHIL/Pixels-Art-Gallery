@@ -19,7 +19,19 @@ $pdo = $dbHandler->connect();
     </noscript>
 </head>
 <body class="is-preload-0 is-preload-1 is-preload-2">
-
+<style>
+    .upload-link {
+    display: inline-block;
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Some padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* No underline */
+    font-weight: bold; /* Make the text bold */
+    border-radius: 5px; /* Rounded corners */
+    margin-top: 10px; /* Some space from the top */
+}
+</style>
 <!-- Main -->
 <div id="main">
 
@@ -32,7 +44,8 @@ $pdo = $dbHandler->connect();
             echo "Logged in as: " . htmlspecialchars($_SESSION['email']);
             echo '<form action="includes/logout.inc.php" method="post">
             <button type="submit">Logout</button>
-          </form>';
+          </form>
+        <a href="upload.php" class="upload-link">Upload Photo</a>';
         } else {
             echo '<form action="index.php" method="get">
             <button type="submit">Login</button>

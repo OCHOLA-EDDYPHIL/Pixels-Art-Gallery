@@ -23,7 +23,7 @@ session_start();
         <?php if (!empty($_SESSION['login_errors'])): ?>
             <?php foreach ($_SESSION['login_errors'] as $error): ?>
                 <div class="error-message">
-                    <!-- Escape output to prevent XSS -->
+                    <!-- Escape output to prevent XSS(Cross-Site Scripting) -->
                     <?php echo htmlspecialchars($error); ?>
                 </div>
             <?php endforeach; ?>
@@ -66,7 +66,7 @@ session_start();
             <?php if (!empty($_SESSION['signup_errors'])): ?>
                 <?php foreach ($_SESSION['signup_errors'] as $error): ?>
                     <div class="error-message">
-                        <!-- Escape output to prevent XSS -->
+                        <!-- Escape output to prevent XSS(Cross-Site Scripting) -->
                         <?php echo htmlspecialchars($error); ?>
                     </div>
                 <?php endforeach; ?>

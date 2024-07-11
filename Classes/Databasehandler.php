@@ -14,7 +14,7 @@ class Databasehandler
     private $pdo; // PDO instance for database connection
 
     /**
-     * Constructor is protected to prevent creating a new instance outside of the class.
+     * Constructor is protected to prevent creating a new instance outside the class.
      * Initializes the database by checking/creating the database and tables.
      */
     protected function __construct()
@@ -74,7 +74,7 @@ class Databasehandler
         try {
             $this->pdo->exec($tableSql);
         } catch (PDOException $e) {
-            die("Creation of table {$tableName} failed: " . $e->getMessage());
+            die("Creation of table $tableName failed: " . $e->getMessage());
         }
     }
 
@@ -89,6 +89,23 @@ class Databasehandler
             self::$instance = new Databasehandler();
         }
         return self::$instance;
+    }
+
+    /**
+     * Retrieve a user's ID by their email.
+     *
+     * @param string $email The user's email.
+     * @return int|null The user's ID if found, null otherwise.
+     */
+    public function getUserIdByEmail($email)
+    {
+        $sql = "SELECT id FROM users WHERE email_address = :email"; // Corrected column name to email_address
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? (int)$result['id'] : null;
     }
 
     /**
