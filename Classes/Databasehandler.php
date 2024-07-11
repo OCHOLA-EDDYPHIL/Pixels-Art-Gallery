@@ -22,16 +22,18 @@ class Databasehandler
         $this->checkAndCreateDatabase();
         $this->connectToDb();
         $this->checkAndCreateTable("users", "CREATE TABLE IF NOT EXISTS users (
-            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            email_address VARCHAR(50) NOT NULL,
+            id INT(6) UNSIGNED AUTO_INCREMENT,
+            email_address VARCHAR(50) NOT NULL UNIQUE,
             pwd VARCHAR(255) NOT NULL,
-            reg_date TIMESTAMP
+            reg_date TIMESTAMP,
+            PRIMARY KEY (id)
         )");
         $this->checkAndCreateTable("photos", "CREATE TABLE IF NOT EXISTS photos (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             filename VARCHAR(255) NOT NULL,
             caption TEXT,
-            user_id INT(6) UNSIGNED,
+            user_id VARCHAR(50) NOT NULL,
+            reg_date TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(email_address) 
         )");
     }
@@ -97,15 +99,18 @@ class Databasehandler
      * @param string $email The user's email.
      * @return int|null The user's ID if found, null otherwise.
      */
-    public function getUserIdByEmail($email)
+        public function getUserEmail($email)
     {
-        $sql = "SELECT id FROM users WHERE email_address = :email"; // Corrected column name to email_address
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $sql = "SELECT email_address FROM users WHERE email_address = ?";
+        $stmt = $this->connect()->prepare($sql);
+        $stmt->bindValue(1, $email);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result ? (int)$result['id'] : null;
+        if ($result) {
+            return $result['email_address'];
+        } else {
+            return null;
+        }
     }
 
     /**

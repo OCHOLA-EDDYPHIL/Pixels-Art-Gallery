@@ -24,11 +24,11 @@ class ImageHandler extends Databasehandler
         }
         $uploadResult = $this->uploadImage($file);
         if (is_array($uploadResult) && $uploadResult['success']) {
-            $userId = $this->getUserIdByEmail($email); // Adjusted to use the correct method
-            if (!$userId) {
-                return "User ID not found.";
-            }
-            return $this->storeCaptionInDB($uploadResult['fileName'], $caption, $userId); // Ensure this method expects a user ID, not an email
+/*            $userId = $this->getUserEmail($email); // Adjusted to use the correct method
+//            if (!$userId) {
+//                return "User ID not found.";
+//            }*/
+            return $this->storeCaptionInDB($uploadResult['fileName'], $caption, $email);
         } else {
             return $uploadResult;
         }

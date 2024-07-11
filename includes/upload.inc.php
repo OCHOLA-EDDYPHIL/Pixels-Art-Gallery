@@ -33,7 +33,7 @@ $caption = $_POST['caption'] ?? 'No cap';
 $email = $_SESSION['email'];
 
 // Get the user ID associated with the email
-$userId = $dbHandler->getUserIdByEmail($email);
+$userId = $dbHandler->getUserEmail($email);
 
 // Exit if the user ID was not found
 if (!$userId) {
