@@ -140,7 +140,7 @@ class Databasehandler
      * Retrieve a user's ID by their email.
      *
      * @param string $email The user's email.
-     * @return int|null The user's ID if found, null otherwise.
+     * @return string|null The user's ID if found, null otherwise.
      *
      * This method uses a prepared statement to query the database for a user's ID based on
      * their email address. Prepared statements are used here for security, to prevent SQL
@@ -148,7 +148,7 @@ class Databasehandler
      * This method is useful for operations that require the user's ID, such as linking records
      * in related tables.
      */
-    public function getUserEmail(string $email): ?int
+    public function getUserEmail(string $email): ?string
     {
         $sql = "SELECT email_address FROM users WHERE email_address = ?";
         $stmt = $this->connect()->prepare($sql);
