@@ -37,7 +37,7 @@ $pdo = $dbHandler->connect();
 
     <!-- Header -->
     <header id="header">
-        <h1>Gallery</h1>
+        <h1>Pixels</h1>
         <p>Welcome to the art show</p>
         <?php
         if (isset($_SESSION['email'])) {
@@ -60,7 +60,7 @@ $pdo = $dbHandler->connect();
             $stmt = $pdo->query("SELECT filename, caption, user_id FROM photos"); // Ensure this matches your actual table and columns
             $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($images as $image) {
-                echo '<article>';
+                echo '<article class="image-container">';
                 echo '<a class="thumbnail" href="uploads/' . htmlspecialchars($image['filename']) . '"><img src="uploads/' . htmlspecialchars($image['filename']) . '" alt="' . htmlspecialchars($image['caption']) . '"/></a>';
                 echo '<h2>' . htmlspecialchars($image['user_id']) . '</h2>';
                 echo '<p>' . htmlspecialchars($image['caption']) . '</p>';
@@ -90,6 +90,25 @@ $pdo = $dbHandler->connect();
 </div>
 
 <!-- Scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const containers = document.querySelectorAll('.image-container');
+    containers.forEach(container => {
+        let maxHeight = 0;
+        const images = container.querySelectorAll('img');
+        // Find the max height to standardize image heights
+        images.forEach(img => {
+            if (img.offsetHeight > maxHeight) {
+                maxHeight = img.offsetHeight;
+            }
+        });
+        // Set all images to the max height found
+        images.forEach(img => {
+            img.style.height = `${maxHeight}px`;
+        });
+    });
+});
+</script>
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/browser.min.js"></script>
 <script src="assets/js/breakpoints.min.js"></script>

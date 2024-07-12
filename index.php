@@ -1,6 +1,12 @@
 <?php
 // Start or resume a session
 session_start();
+
+// if user is logged in redirect to main page
+if (isset($_SESSION['email'])) {
+    header('Location: main.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

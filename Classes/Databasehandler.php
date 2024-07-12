@@ -36,6 +36,12 @@ class Databasehandler
             reg_date TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(email_address) 
         )");
+        $this->checkAndCreateTable("urls", "CREATE TABLE IF NOT EXISTS urls (
+            id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            long_url VARCHAR(2048) NOT NULL,
+            short_code VARCHAR(255) NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+        )");
     }
 
     /**
@@ -99,7 +105,7 @@ class Databasehandler
      * @param string $email The user's email.
      * @return int|null The user's ID if found, null otherwise.
      */
-        public function getUserEmail($email)
+    public function getUserEmail($email)
     {
         $sql = "SELECT email_address FROM users WHERE email_address = ?";
         $stmt = $this->connect()->prepare($sql);

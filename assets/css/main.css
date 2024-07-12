@@ -28,7 +28,12 @@ section, summary, time, mark, audio, video {
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;}
-
+.image-container img {
+    width: 100%; /* Adjust images to container width */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 200px; /* Maximum height */
+    object-fit: cover; /* Cover the area without distortion */
+}
 body {
 	line-height: 1;
 }
