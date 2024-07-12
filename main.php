@@ -21,16 +21,16 @@ $pdo = $dbHandler->connect();
 <body class="is-preload-0 is-preload-1 is-preload-2">
 <style>
     .upload-link {
-    display: inline-block;
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
-    padding: 10px 20px; /* Some padding */
-    text-align: center; /* Centered text */
-    text-decoration: none; /* No underline */
-    font-weight: bold; /* Make the text bold */
-    border-radius: 5px; /* Rounded corners */
-    margin-top: 10px; /* Some space from the top */
-}
+        display: inline-block;
+        background-color: #4CAF50; /* Green background */
+        color: white; /* White text */
+        padding: 10px 20px; /* Some padding */
+        text-align: center; /* Centered text */
+        text-decoration: none; /* No underline */
+        font-weight: bold; /* Make the text bold */
+        border-radius: 5px; /* Rounded corners */
+        margin-top: 10px; /* Some space from the top */
+    }
 </style>
 <!-- Main -->
 <div id="main">
@@ -91,23 +91,26 @@ $pdo = $dbHandler->connect();
 
 <!-- Scripts -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const containers = document.querySelectorAll('.image-container');
-    containers.forEach(container => {
-        let maxHeight = 0;
-        const images = container.querySelectorAll('img');
-        // Find the max height to standardize image heights
-        images.forEach(img => {
-            if (img.offsetHeight > maxHeight) {
-                maxHeight = img.offsetHeight;
-            }
-        });
-        // Set all images to the max height found
-        images.forEach(img => {
-            img.style.height = `${maxHeight}px`;
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select all elements with the class 'image-container'
+        const containers = document.querySelectorAll('.image-container');
+        containers.forEach(container => {
+            let maxHeight = 0; // Initialize maxHeight to 0
+            const images = container.querySelectorAll('img'); // Select all 'img' elements within the current container
+            // Iterate over each image to find the maximum height
+            images.forEach(img => {
+                if (img.offsetHeight > maxHeight) {
+                    maxHeight = img.offsetHeight; // Update maxHeight if the current image's height is greater
+                }
+            });
+            // Set the height of all images to maxHeight to ensure uniformity
+            images.forEach(img => {
+                img.style.height = `${maxHeight}px`;
+            });
         });
     });
-});
+    // This script ensures that all images within each 'image-container' have the same height,
+    // improving the visual consistency of the gallery.
 </script>
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/browser.min.js"></script>

@@ -18,7 +18,7 @@
         </div>
         <div style="text-align: center;">
             <button type="submit">
-                <a href="" style="pointer-events: none">
+                <a href="" style="pointer-events: none>
                     Shorten URL
                     <span></span>
                 </a>

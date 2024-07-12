@@ -2,12 +2,35 @@
 session_start(); // Ensure session is started
 
 require_once 'Databasehandler.php'; // Include the Databasehandler class
+
+/**
+ * The Signup class handles user registration processes.
+ * It extends the Databasehandler class to utilize its database connection and methods.
+ */
 class Signup extends Databasehandler
 {
+    /**
+     * @var string $email User's email address.
+     */
     private $email;
+
+    /**
+     * @var string $pwd User's password.
+     */
     private $pwd;
+
+    /**
+     * @var array $signup_errors Stores any errors encountered during the signup process.
+     */
     private $signup_errors = [];
 
+    /**
+     * Constructor for the Signup class.
+     * Initializes the user's email and password, and ensures a database connection.
+     *
+     * @param string $email User's email address.
+     * @param string $pwd User's password.
+     */
     public function __construct($email, $pwd)
     {
         parent::__construct(); // Ensure database connection and base table creation
@@ -15,6 +38,10 @@ class Signup extends Databasehandler
         $this->pwd = $pwd;
     }
 
+    /**
+     * Handles the user signup process, including validation and insertion into the database.
+     * Sets session variables for errors or success messages and redirects accordingly.
+     */
     public function signupUser()
     {
         // Error handlers
@@ -43,21 +70,42 @@ class Signup extends Databasehandler
         exit();
     }
 
+    /**
+     * Checks if the email or password fields are empty.
+     *
+     * @return bool Returns true if either field is empty, false otherwise.
+     */
     private function isEmptySubmit()
     {
         return empty($this->email) || empty($this->pwd);
     }
 
+    /**
+     * Validates the email address format.
+     *
+     * @return bool Returns true if the email is invalid, false otherwise.
+     */
     private function invalidEmail()
     {
         return !filter_var($this->email, FILTER_VALIDATE_EMAIL);
     }
 
+    /**
+     * Checks if the provided email is already taken by another user.
+     *
+     * @return bool Returns true if the email is taken, false otherwise.
+     */
     private function emailTaken()
     {
         return $this->checkUser($this->email);
     }
 
+    /**
+     * Queries the database to check for the existence of a user with the given email.
+     *
+     * @param string $email The email address to check.
+     * @return bool Returns true if a user with the email exists, false otherwise.
+     */
     private function checkUser($email)
     {
         $query = "SELECT email_address FROM users WHERE email_address = :email";
@@ -72,11 +120,20 @@ class Signup extends Databasehandler
         return $statement->rowCount() > 0;
     }
 
+    /**
+     * Checks if the password meets complexity requirements.
+     *
+     * @param string $password The password to check.
+     * @return bool Returns true if the password is complex enough, false otherwise.
+     */
     private function isPasswordComplex($password)
     {
         return strlen($password) > 5 && preg_match('/\d/', $password);
     }
 
+    /**
+     * Inserts a new user into the database with the provided email and hashed password.
+     */
     private function insertUser()
     {
         $query = "INSERT INTO users(email_address, pwd) VALUES(:email, :pwd)";
