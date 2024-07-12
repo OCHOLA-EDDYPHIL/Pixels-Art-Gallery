@@ -9,17 +9,17 @@ class ImageHandler extends Databasehandler
     /**
      * @var string $targetDir Directory where uploaded images will be stored.
      */
-    private $targetDir;
+    private string $targetDir;
 
     /**
      * @var int $maxFileSize Maximum file size allowed for uploads (in bytes).
      */
-    private $maxFileSize = 10000000; // 10MB
+    private int $maxFileSize = 10000000; // 10MB
 
     /**
      * @var array $allowedFileTypes Array of allowed file types for upload.
      */
-    private $allowedFileTypes = ['jpg', 'jpeg', 'png'];
+    private array $allowedFileTypes = ['jpg', 'jpeg', 'png'];
 
     /**
      * Constructor. Initializes the target directory for uploads and creates it if it doesn't exist.
@@ -39,9 +39,9 @@ class ImageHandler extends Databasehandler
      * @param array $file The uploaded file from the $_FILES array.
      * @param string $caption The caption for the uploaded image.
      * @param string $email The email of the user uploading the image.
-     * @return string|array Returns a success message with file name if successful, or an error message if not.
+     * @return bool|array|string Returns a success message with file name if successful, or an error message if not.
      */
-    public function handleUpload($file, $caption, $email)
+    public function handleUpload(array $file, string $caption, string $email): bool|array|string
     {
         // Check if user exists in the database
         $userExists = $this->checkUserExists($email);
@@ -66,7 +66,7 @@ class ImageHandler extends Databasehandler
      * @param string $email The email of the user to check.
      * @return bool Returns true if the user exists, false otherwise.
      */
-    private function checkUserExists($email)
+    private function checkUserExists(string $email): bool
     {
         $sql = "SELECT * FROM users WHERE email_address = ?";
         $stmt = Databasehandler::getInstance()->connect()->prepare($sql);
@@ -78,9 +78,9 @@ class ImageHandler extends Databasehandler
      * Validates and uploads the image file to the server.
      *
      * @param array $file The uploaded file from the $_FILES array.
-     * @return array|string Returns an array with success status and file name if successful, or an error message if not.
+     * @return bool|array|string Returns an array with success status and file name if successful, or an error message if not.
      */
-    public function uploadImage($file)
+    public function uploadImage(array $file): bool|array|string
     {
         // Validate the image file
         $validationResult = $this->validateImage($file);
@@ -114,7 +114,7 @@ class ImageHandler extends Databasehandler
      *                     appropriate error message is returned. This message can be used to inform the user about
      *                     the specific reason their upload was rejected.
      */
-    public function validateImage($file)
+    public function validateImage(array $file): bool|string
     {
         // Check if the file is an image by attempting to get its size and type.
         // This is done using the getimagesize() function, which returns false if the file is not an image.
@@ -145,7 +145,7 @@ class ImageHandler extends Databasehandler
      * @param string $fileName The original file name.
      * @return string The unique file name.
      */
-    private function generateUniqueFileName($fileName)
+    private function generateUniqueFileName(string $fileName): string
     {
         $imageFileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         return uniqid() . 'Classes.' . $imageFileType;
@@ -159,13 +159,13 @@ class ImageHandler extends Databasehandler
      * @param string $email The email of the user uploading the image.
      * @return string Returns a success message or an error message.
      */
-    public function storeCaptionInDB($fileName, $caption, $email)
+    public function storeCaptionInDB(string $fileName, string $caption, string $email): string
     {
         $sql = "INSERT INTO photos (filename, caption, user_id) VALUES (?, ?, ?)";
         $stmt = $this->connect()->prepare($sql);
-        $stmt->bindParam(1, $fileName, PDO::PARAM_STR);
-        $stmt->bindParam(2, $caption, PDO::PARAM_STR);
-        $stmt->bindParam(3, $email, PDO::PARAM_STR);
+        $stmt->bindParam(1, $fileName);
+        $stmt->bindParam(2, $caption);
+        $stmt->bindParam(3, $email);
         if ($stmt->execute()) {
             header('Location: ../main.php');  // Redirects after a successful upload
             exit();
@@ -181,7 +181,7 @@ class ImageHandler extends Databasehandler
      * @param string $email The email of the user attempting to delete the image.
      * @return string Returns a success message or an error message.
      */
-    public function deleteImage($filename, $email)
+    public function deleteImage(string $filename, string $email): string
     {
         // Verify that the user is the uploader
         $sql = "SELECT * FROM photos WHERE filename = ? AND user_id = ?";

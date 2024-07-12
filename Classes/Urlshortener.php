@@ -8,14 +8,14 @@ class Urlshortener extends Databasehandler
     /**
      * @var PDO $pdo Database connection object.
      */
-    protected $pdo;
+    protected PDO $pdo;
 
     /**
      * Constructor for the Urlshortener class.
      *
      * @param PDO $pdo The PDO database connection object from the Databasehandler class.
      */
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -28,7 +28,7 @@ class Urlshortener extends Databasehandler
      * @param string $longUrl The original URL to be shortened.
      * @return string The generated short code for the URL.
      */
-    public function shortenURL($longUrl)
+    public function shortenURL(string $longUrl): string
     {
         $shortCode = $this->generateShortCode();
         $this->storeURL($longUrl, $shortCode);
@@ -42,7 +42,7 @@ class Urlshortener extends Databasehandler
      *
      * @return string The generated short code.
      */
-    protected function generateShortCode()
+    protected function generateShortCode(): string
     {
         return substr(md5(uniqid(rand(), true)), 0, 6);
     }
@@ -53,7 +53,7 @@ class Urlshortener extends Databasehandler
      * @param string $longUrl The original URL.
      * @param string $shortCode The generated short code for the URL.
      */
-    protected function storeURL($longUrl, $shortCode)
+    protected function storeURL(string $longUrl, string $shortCode): void
     {
         $stmt = $this->pdo->prepare("INSERT INTO urls (long_url, short_code) VALUES (?, ?)");
         $stmt->execute([$longUrl, $shortCode]);
@@ -67,7 +67,7 @@ class Urlshortener extends Databasehandler
      * @param string $shortCode The short code to look up.
      * @return string|null The original URL if found, null otherwise.
      */
-    public function getLongURL($shortCode)
+    public function getLongURL(string $shortCode): ?string
     {
         $stmt = $this->pdo->prepare("SELECT long_url FROM urls WHERE short_code = ?");
         $stmt->execute([$shortCode]);

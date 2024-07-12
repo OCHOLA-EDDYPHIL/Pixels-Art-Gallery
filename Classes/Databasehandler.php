@@ -16,12 +16,12 @@
  */
 class Databasehandler
 {
-    private static $instance = null; // Holds the singleton instance
-    private $host = "localhost"; // Database host
-    private $dbname = "project"; // Database name
-    private $username = "root"; // Database username
-    private $password = ""; // Database password
-    private $pdo; // PDO instance for database connection
+    private static ?Databasehandler $instance = null; // Holds the singleton instance
+    private string $host = "localhost"; // Database host
+    private string $dbname = "project"; // Database name
+    private string $username = "root"; // Database username
+    private string $password = ""; // Database password
+    private object $pdo; // PDO instance for database connection
 
     /**
      * Constructor is protected to prevent creating a new instance outside the class.
@@ -68,7 +68,7 @@ class Databasehandler
      * creates the database. This is a crucial step in ensuring that the application
      * has a database to work with before attempting to connect to it or create tables.
      */
-    private function checkAndCreateDatabase()
+    private function checkAndCreateDatabase(): void
     {
         try {
             $pdo = new PDO("mysql:host=$this->host", $this->username, $this->password);
@@ -88,7 +88,7 @@ class Databasehandler
      * error handling. This connection is essential for performing all subsequent
      * database operations.
      */
-    private function connectToDb()
+    private function connectToDb(): void
     {
         try {
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->username, $this->password);
@@ -109,7 +109,7 @@ class Databasehandler
      * for storing and retrieving data. The method takes the name of the table and the SQL
      * statement as parameters, providing flexibility to create various tables as needed.
      */
-    protected function checkAndCreateTable($tableName, $tableSql)
+    protected function checkAndCreateTable(string $tableName, string $tableSql): void
     {
         try {
             $this->pdo->exec($tableSql);
@@ -121,14 +121,14 @@ class Databasehandler
     /**
      * Returns the singleton instance of the Databasehandler.
      *
-     * @return Databasehandler The singleton instance.
+     * @return Databasehandler|null The singleton instance.
      *
      * This static method checks if an instance of the Databasehandler class already exists.
      * If not, it creates one and stores it in a static property. This ensures that there is
      * only ever one instance of the Databasehandler, adhering to the Singleton pattern. This
      * instance can then be used throughout the application to perform database operations.
      */
-    public static function getInstance()
+    public static function getInstance(): ?Databasehandler
     {
         if (!self::$instance) {
             self::$instance = new Databasehandler();
@@ -148,7 +148,7 @@ class Databasehandler
      * This method is useful for operations that require the user's ID, such as linking records
      * in related tables.
      */
-    public function getUserEmail($email)
+    public function getUserEmail(string $email): ?int
     {
         $sql = "SELECT email_address FROM users WHERE email_address = ?";
         $stmt = $this->connect()->prepare($sql);
@@ -165,7 +165,7 @@ class Databasehandler
     /**
      * Provides access to the PDO connection.
      *
-     * @return PDO The PDO connection instance.
+     * @return object|PDO
      *
      * This method returns the PDO instance used for the database connection. It allows
      * other parts of the application to use the established connection for executing

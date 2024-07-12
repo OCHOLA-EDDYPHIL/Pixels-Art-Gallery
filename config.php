@@ -1,10 +1,10 @@
 <?php
 
 // Centralized configuration settings for database connection
-define('DB_HOST', 'localhost'); // Database host
-define('DB_NAME', 'project'); // Database name
-define('DB_USER', 'root'); // Database user
-define('DB_PASS', ''); // Database password
+const DB_HOST = 'localhost'; // Database host
+const DB_NAME = 'project'; // Database name
+const DB_USER = 'root'; // Database user
+const DB_PASS = ''; // Database password
 
 /**
  * Function to dynamically generate the base URL of the project.
@@ -15,7 +15,8 @@ define('DB_PASS', ''); // Database password
  *
  * @return string The base URL of the project.
  */
-function getBaseUrl() {
+function getBaseUrl(): string
+{
     // Determine the protocol (HTTP or HTTPS)
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     // Get the domain name

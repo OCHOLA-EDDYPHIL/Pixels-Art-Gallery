@@ -10,17 +10,17 @@ class Login extends Databasehandler
     /**
      * @var string $email User's email address.
      */
-    private $email;
+    private string $email;
 
     /**
      * @var string $pwd User's password.
      */
-    private $pwd;
+    private string $pwd;
 
     /**
      * @var array $login_errors Stores any login errors encountered during the login process.
      */
-    private $login_errors = [];
+    private array $login_errors = [];
 
     /**
      * Constructor for the Login class.
@@ -28,7 +28,7 @@ class Login extends Databasehandler
      * @param string $email User's email address.
      * @param string $pwd User's password.
      */
-    public function __construct($email, $pwd)
+    public function __construct(string $email, string $pwd)
     {
         $this->email = $email;
         $this->pwd = $pwd;
@@ -40,7 +40,7 @@ class Login extends Databasehandler
      * Validates the user's credentials, sets session variables upon successful login,
      * and redirects to the appropriate page based on the outcome of the login attempt.
      */
-    public function loginUser()
+    public function loginUser(): void
     {
         // Checks if the email and password fields were submitted empty
         if ($this->isEmptySubmit()) {
@@ -70,7 +70,7 @@ class Login extends Databasehandler
      *
      * @return bool Returns true if either the email or password field is empty, false otherwise.
      */
-    private function isEmptySubmit()
+    private function isEmptySubmit(): bool
     {
         return empty($this->email) || empty($this->pwd);
     }
@@ -80,7 +80,7 @@ class Login extends Databasehandler
      *
      * @return bool Returns true if the user exists and the password matches, false otherwise.
      */
-    private function getUser()
+    private function getUser(): bool
     {
         // Prepare and execute the query to find the user by email
         $query = "SELECT pwd FROM users WHERE email_address = :email";

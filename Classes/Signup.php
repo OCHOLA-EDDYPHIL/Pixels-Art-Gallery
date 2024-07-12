@@ -12,17 +12,17 @@ class Signup extends Databasehandler
     /**
      * @var string $email User's email address.
      */
-    private $email;
+    private string $email;
 
     /**
      * @var string $pwd User's password.
      */
-    private $pwd;
+    private string $pwd;
 
     /**
      * @var array $signup_errors Stores any errors encountered during the signup process.
      */
-    private $signup_errors = [];
+    private array $signup_errors = [];
 
     /**
      * Constructor for the Signup class.
@@ -31,7 +31,7 @@ class Signup extends Databasehandler
      * @param string $email User's email address.
      * @param string $pwd User's password.
      */
-    public function __construct($email, $pwd)
+    public function __construct(string $email, string $pwd)
     {
         parent::__construct(); // Ensure database connection and base table creation
         $this->email = $email;
@@ -42,7 +42,7 @@ class Signup extends Databasehandler
      * Handles the user signup process, including validation and insertion into the database.
      * Sets session variables for errors or success messages and redirects accordingly.
      */
-    public function signupUser()
+    public function signupUser(): void
     {
         // Error handlers
         if ($this->isEmptySubmit()) {
@@ -75,7 +75,7 @@ class Signup extends Databasehandler
      *
      * @return bool Returns true if either field is empty, false otherwise.
      */
-    private function isEmptySubmit()
+    private function isEmptySubmit(): bool
     {
         return empty($this->email) || empty($this->pwd);
     }
@@ -85,7 +85,7 @@ class Signup extends Databasehandler
      *
      * @return bool Returns true if the email is invalid, false otherwise.
      */
-    private function invalidEmail()
+    private function invalidEmail(): bool
     {
         return !filter_var($this->email, FILTER_VALIDATE_EMAIL);
     }
@@ -95,7 +95,7 @@ class Signup extends Databasehandler
      *
      * @return bool Returns true if the email is taken, false otherwise.
      */
-    private function emailTaken()
+    private function emailTaken(): bool
     {
         return $this->checkUser($this->email);
     }
@@ -106,7 +106,7 @@ class Signup extends Databasehandler
      * @param string $email The email address to check.
      * @return bool Returns true if a user with the email exists, false otherwise.
      */
-    private function checkUser($email)
+    private function checkUser(string $email): bool
     {
         $query = "SELECT email_address FROM users WHERE email_address = :email";
         $statement = Databasehandler::getInstance()->connect()->prepare($query);
@@ -126,7 +126,7 @@ class Signup extends Databasehandler
      * @param string $password The password to check.
      * @return bool Returns true if the password is complex enough, false otherwise.
      */
-    private function isPasswordComplex($password)
+    private function isPasswordComplex(string $password): bool
     {
         return strlen($password) > 5 && preg_match('/\d/', $password);
     }
@@ -134,7 +134,7 @@ class Signup extends Databasehandler
     /**
      * Inserts a new user into the database with the provided email and hashed password.
      */
-    private function insertUser()
+    private function insertUser(): void
     {
         $query = "INSERT INTO users(email_address, pwd) VALUES(:email, :pwd)";
         $statement = Databasehandler::getInstance()->connect()->prepare($query);

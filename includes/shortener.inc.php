@@ -18,5 +18,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['longUrl'])) {
     // Retrieve the base URL of the application
     $baseurl = getBaseUrl(); // Use the function to get the base URL
     // Display the generated short URL as a clickable link
-    echo "Short URL: <a href=\"{$baseurl}redirect.inc.php?c={$shortCode}\">{$baseurl}redirect.inc.php?c={$shortCode}</a>";
+    echo "Short URL: <a href=\"{$baseurl}redirect.inc.php?c=$shortCode\">{$baseurl}redirect.inc.php?c={$shortCode}</a>";
 }
