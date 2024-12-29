@@ -75,7 +75,11 @@ To run this project, you'll need:
     - Use the homepage to log in, upload, and manage your photos.
 
 
+---
+
+
 ## Project Structure
+
 ```graphql
 pixels/
 ├── Classes/
@@ -93,6 +97,11 @@ pixels/
 ├── upload.php \# Handles the photo upload interface.
 ├── README.md \# Documentation for the project.
 ```
+
+
+---
+
+
 ## Usage
 
 1. **Homepage**:
@@ -109,8 +118,12 @@ pixels/
     - Each photo shows the uploader and its caption underneath.
     - Users can delete their own photos from the gallery.
 
-[//]: # (Todo: Add screenshots of the application.)
+
 ---
+
+
+[//]: # (Todo: Add screenshots of the application.)
+
 [//]: # (## Screenshots)
 
 [//]: # ()
@@ -131,6 +144,10 @@ pixels/
 [//]: # ()
 [//]: # (---)
 
+
+---
+
+
 ## Technologies Used
 
 - **Backend**:
@@ -146,7 +163,9 @@ pixels/
     - PhpStorm for development
     - XAMPP/WAMP for local server testing (optional)
 
+
 ---
+
 
 ## Future Enhancements
 
