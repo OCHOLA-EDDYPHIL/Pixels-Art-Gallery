@@ -1,129 +1,120 @@
-# Pixels - Art Show Application
+# Pixels - Online Art Gallery
 
-Welcome to **Pixels**, an art gallery web application where users can upload, view, and manage their photos. This project is built with PHP for the backend and HTML/CSS/JavaScript for the frontend, with database integration for storing user information and photos.
+Welcome to **Pixels**, an art gallery web application where users can upload, view, and manage their photos. This project is designed with a robust **Object-Oriented Programming (OOP)** architecture, leveraging PHP for efficient backend operations, and uses MySQL for database integration.
+
+---
 
 ## Features
 
-- **User Authentication**: Users can log in and log out securely.
-- **Image Upload**: Logged-in users can upload their photos along with captions.
-- **Photo Gallery**: View all uploaded photos in a visually consistent format.
-- **Delete Photos**: Users can delete their uploaded photos.
-- **Responsive Design**: The interface is optimized for mobile and desktop screens.
+- **User Authentication**: Secure login and logout functionality with validation.
+- **User Registration**: Allows new users to create accounts.
+- **Image Validation**: Limits uploads to specific file types (JPG, JPEG, PNG) with size restrictions (max 10MB).
+- **Image Upload**: Users can upload photos along with captions.
+- **Photo Management**:
+   - View uploaded photos in a gallery format.
+   - Delete photos directly from the gallery.
+- **Responsive Design**: The application is mobile-friendly for an enhanced user experience.
 
 ---
 
 ## Requirements
 
-To run this project, you'll need:
+You'll need the following to run the project:
 
 - **PHP 8.4** or higher
-- Web server (e.g., built-in PHP server, Apache, or Nginx)
-- MySQL or compatible database
+- **MySQL** database
+- A web server:
+   - **Windows**: [XAMPP](https://www.apachefriends.org/index.html)
+   - **Linux**: [LAMP](https://wiki.debian.org/LAMP) or an equivalent server stack
 - Composer (for dependency management, if required)
-- PhpStorm (optional, for development)
+- PhpStorm IDE (optional, for development)
 
 ---
 
 ## Installation and Setup
 
 1. **Clone the Repository**:
+   Clone the repository and navigate into the project directory:
    ```bash
-   git clone https://github.com/your-repo/pixels.git
-   cd pixels
+   git clone https://github.com/OCHOLA-EDDYPHIL/Pixels-Art-Gallery.git
+   ```
+   ```bash
+   cd Pixels-Art-Gallery
    ```
 
-2. **Set Up the Database**:
-    - Create a MySQL database (e.g., `pixels_db`).
-    - Import the database schema (if provided), or create the necessary tables:
-      ```sql
-      CREATE TABLE photos (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          filename VARCHAR(255) NOT NULL,
-          caption TEXT,
-          user_id VARCHAR(255),
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
- 
-      CREATE TABLE users (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          email VARCHAR(255) NOT NULL UNIQUE,
-          password_hash VARCHAR(255) NOT NULL
-      );
-      ```
+2. **Ensure You Have a Local Web Server**:
+   - On **Windows**, download and set up [XAMPP](https://www.apachefriends.org/index.html).
+   - On **Linux**, set up a LAMP stack or an alternative.
+   - Ensure both the PHP interpreter and the MySQL database are running.
 
-3. **Configure Database Connection**:
-    - Open the file `Classes/Databasehandler.php`.
-    - Update the database credentials:
-      ```php
-      $host = 'localhost';
-      $db   = 'pixels_db';
-      $user = 'your_username';
-      $pass = 'your_password';
-      ```
+3. **Database Setup**:
+   The `Databasehandler.php` class automatically creates the required database (if it doesn't exist) along with the necessary tables. No manual database setup is required.
 
-4. **Start the PHP Server**:
-    - Using the built-in PHP server:
-      ```bash
-      php -S localhost:8000
-      ```
-    - Open your browser and navigate to:
-      ```
-      http://localhost:8000
-      ```
+4. **Configure Database Connection**:
+   Update your database credentials in `Classes/Databasehandler.php`:
+   ```php
+   private string $host = "localhost";  // Database host
+   private string $dbname = "project"; // Database name
+   private string $username = "root";  // MySQL username
+   private string $password = "";      // MySQL password
+   ```
 
-5. **Access the Application**:
-    - Use the homepage to log in, upload, and manage your photos.
+5. **Start the Server**:
+   - Using PHP's built-in development server:
+     ```bash
+     php -S localhost:8000
+     ```
+   - Or place the project directory in your server's document root:
+      - For **XAMPP**, copy it into the `htdocs` folder.
+      - For **LAMP**, move it to `/var/www/html/`.
 
+   Open your browser and visit:
+   ```
+   http://localhost:8000
+   ```
+
+6. **Enjoy the Application**:
+   Log in, upload photos, and explore the photo gallery.
 
 ---
-
 
 ## Project Structure
 
-```graphql
+The project adopts an **Object-Oriented Programming (OOP)** structure for scalability and maintainability. Below is the folder and file organization:
+
+```plaintext
 pixels/
 ├── Classes/
-│   ├── Databasehandler.php \# Handles the database connection.
-│   ├── YourOtherClasses.php \# Add any additional classes here.
+│   ├── Databasehandler.php   # Handles database connection and setup.
+│   ├── ImageHandler.php      # Manages image uploads, validation, and deletion.
+│   ├── Login.php             # Handles user authentication.
+│   ├── Signup.php            # Manages user registration.
 ├── assets/
-│   ├── css/ \# Stylesheets for the project.
-│   ├── js/ \# JavaScript files for interactivity.
-│   ├── images/ \# Static images (if needed).
+│   ├── css/                  # Stylesheets for the frontend.
+│   ├── js/                   # JavaScript for interactivity.
+├── uploads/                  # Directory for uploaded images.
 ├── includes/
-│   ├── logout.inc.php \# Handles user logout.
-│   ├── delete\_image.inc.php \# Handles photo deletion.
-├── uploads/ \# Directory for uploaded images.
-├── index.php \# Main entry point for the application.
-├── upload.php \# Handles the photo upload interface.
-├── README.md \# Documentation for the project.
+│   ├── logout.inc.php        # Handles user logout requests.
+│   ├── delete_image.inc.php  # Handles photo deletion requests.
+├── index.php                 # Home page for the application.
+├── upload.php                # Interface for uploading photos.
+└── README.md                 # Project documentation.
 ```
 
-
 ---
 
+## Current Features
 
-## Usage
+This project already includes:
 
-1. **Homepage**:
-    - Displays a list of uploaded photos.
-    - Allows users to log in or log out.
-
-2. **Logging In**:
-    - Users can log in with their email and password.
-
-3. **Photo Upload**:
-    - After logging in, users can upload photos with captions.
-
-4. **Photo Gallery**:
-    - Each photo shows the uploader and its caption underneath.
-    - Users can delete their own photos from the gallery.
-
-
----
-
+- **Database & Table Creation**: Automatically handled by the `Databasehandler` class.
+- **User Registration**: Implements features for creating new accounts, including email and password validation in the `Signup` class.
+- **Image Validation**: Ensures uploaded files are valid images (JPG, JPEG, PNG) and below 10MB in size. This is managed by the `ImageHandler` class.
+- **Password Security**: User passwords are hashed using `password_hash()` for security.
+- **File Storage**: Uploaded files are securely moved to the `/uploads` directory.
 
 [//]: # (Todo: Add screenshots of the application.)
-
+---
 [//]: # (## Screenshots)
 
 [//]: # ()
@@ -131,61 +122,37 @@ pixels/
 
 [//]: # (![Homepage Screenshot]&#40;assets/images/homepage-screenshot.png&#41;)
 
-[//]: # ()
-[//]: # (### Login Page)
+## Future Features
 
-[//]: # (![Login Page Screenshot]&#40;assets/images/login-screenshot.png&#41;)
+While most core functionality is already implemented, these enhancements are planned for future versions:
 
-[//]: # ()
-[//]: # (### Photo Upload)
-
-[//]: # (![Upload Screenshot]&#40;assets/images/upload-screenshot.png&#41;)
-
-[//]: # ()
-[//]: # (---)
-
+- More detailed **user profiles** for account customization.
+- **Pagination** for handling large galleries efficiently.
+- **Enhanced error handling** and user feedback for upload forms.
+- **Social sharing** for photos and galleries.
 
 ---
 
+## Troubleshooting & Common Issues
 
-## Technologies Used
-
-- **Backend**:
-    - PHP 8.x
-    - MySQL Database
-
-- **Frontend**:
-    - HTML5
-    - CSS3 (Responsive Design)
-    - JavaScript
-
-- **Others**:
-    - PhpStorm for development
-    - XAMPP/WAMP for local server testing (optional)
-
+1. **Connection Errors**: Ensure the MySQL server is running, and the database credentials in `Databasehandler.php` are correct.
+2. **Permissions**: Ensure the `uploads/` directory has proper write permissions:
+   ```bash
+   chmod -R 775 uploads/
+   ```
+3. **XAMPP/LAMP Issues**: Verify that Apache and MySQL modules are active.
 
 ---
 
-
-## Future Enhancements
-
-- Add image validation to ensure proper file types and size limits.
-- Implement user registration.
-- Add pagination for the photo gallery.
-- Enhance security with prepared statements (if not already done).
-- Provide a profile page for users.
-- Enable better error handling and feedback for uploads.
-
----
 
 ## Author
 
 - **Name**: Ochola
 
-Feel free to reach out for any questions or suggestions regarding this project!
+Feel free to reach out with questions, suggestions, or feedback!
 
 ---
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
