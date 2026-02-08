@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/session_config.php';
 require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../Classes/Databasehandler.php';
-require_once __DIR__ . '/../Classes/Urlshortener.php';
+
+use App\Container;
+use App\Services\UrlService;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
@@ -13,10 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!empty($_POST['longUrl'])) {
-        $dbHandler = Databasehandler::getInstance();
-        $pdo = $dbHandler->connect();
-        $urlShortener = new Urlshortener($pdo);
-        $shortCode = $urlShortener->shortenURL($_POST['longUrl']);
+        $urlShortener = new UrlService(Container::db());
+        $shortCode = $urlShortener->shorten($_POST['longUrl']);
         if (!preg_match('/^[a-f0-9]{6}$/i', $shortCode)) {
             http_response_code(400);
             echo htmlspecialchars($shortCode);

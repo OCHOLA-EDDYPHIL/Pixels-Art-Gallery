@@ -1,0 +1,7 @@
+.worktrees/
+vendor/
+.env
+storage/logs/
+storage/uploads/
+storage/thumbnails/
+.phpunit.result.cache

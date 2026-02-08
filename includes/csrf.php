@@ -1,31 +1,17 @@
 <?php
 
-/**
- * Generate and persist a CSRF token for the current session.
- *
- * @return string
- */
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Utils\Csrf;
+
 function generateCsrfToken(): string
 {
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
-    }
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
+    return Csrf::token();
 }
 
-/**
- * Verify a CSRF token from user input.
- *
- * @param string $token
- * @return bool
- */
 function verifyCsrfToken(string $token): bool
 {
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
-    }
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    return Csrf::verify($token);
 }

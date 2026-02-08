@@ -21,12 +21,12 @@ Welcome to **Pixels**, an art gallery web application where users can upload, vi
 
 You'll need the following to run the project:
 
-- **PHP 8.4** or higher
+- **PHP 8.1** or higher with PDO + GD extensions
 - **MySQL** database
 - A web server:
    - **Windows**: [XAMPP](https://www.apachefriends.org/index.html)
    - **Linux**: [LAMP](https://wiki.debian.org/LAMP) or an equivalent server stack
-- Composer (for dependency management, if required)
+- Composer (dependency management)
 - PhpStorm IDE (optional, for development)
 
 ---
@@ -42,24 +42,27 @@ You'll need the following to run the project:
    cd Pixels-Art-Gallery
    ```
 
-2. **Ensure You Have a Local Web Server**:
+2. **Install PHP Dependencies**:
+   ```bash
+   composer install
+   ```
+
+3. **Ensure You Have a Local Web Server**:
    - On **Windows**, download and set up [XAMPP](https://www.apachefriends.org/index.html).
    - On **Linux**, set up a LAMP stack or an alternative.
    - Ensure both the PHP interpreter and the MySQL database are running.
 
-3. **Database Setup**:
+4. **Configure Environment**:
+   Copy the example environment file and set your credentials.
+   ```bash
+   cp .env.example .env
+   ```
+   Update the DB values in `.env` (or the config class if still using inline defaults).
+
+5. **Database Setup**:
    The `Databasehandler.php` class automatically creates the required database (if it doesn't exist) along with the necessary tables. No manual database setup is required.
 
-4. **Configure Database Connection**:
-   Update your database credentials in `Classes/Databasehandler.php`:
-   ```php
-   private string $host = "localhost";  // Database host
-   private string $dbname = "project"; // Database name
-   private string $username = "root";  // MySQL username
-   private string $password = "";      // MySQL password
-   ```
-
-5. **Start the Server**:
+6. **Start the Server**:
    - Using PHP's built-in development server:
      ```bash
      php -S localhost:8000
@@ -73,8 +76,23 @@ You'll need the following to run the project:
    http://localhost:8000
    ```
 
-6. **Enjoy the Application**:
+7. **Enjoy the Application**:
    Log in, upload photos, and explore the photo gallery.
+
+---
+
+## Project Structure (current)
+
+```
+src/           # PSR-4 app code (config, container, services, utils)
+includes/      # Form handlers (auth/upload/delete/shortener) using services
+assets/        # CSS/JS
+uploads/       # User uploads (ensure writable, execution blocked)
+index.php      # Auth landing
+main.php       # Gallery/dashboard
+upload.php     # Upload form
+shorten.php    # URL shortener UI
+```
 
 ---
 

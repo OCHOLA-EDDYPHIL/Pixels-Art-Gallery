@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/session_config.php';
 require_once __DIR__ . '/csrf.php';
-require_once __DIR__ . '/../Classes/Databasehandler.php';
-require_once __DIR__ . '/../Classes/ImageHandler.php';
+
+use App\Config\Config;
+use App\Container;
+use App\Services\ImageService;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -21,19 +26,15 @@ if (!isset($_SESSION['email'])) {
 }
 
 $filename = $_POST['filename'] ?? '';
-if (!preg_match('/^[a-f0-9]{32}\.(jpg|jpeg|png)$/i', $filename)) {
-    // Fallback for legacy filenames: strip path and validate characters
-    $filename = basename($filename);
-    if (!preg_match('/^[A-Za-z0-9._-]+$/', $filename)) {
-        http_response_code(400);
-        exit('Invalid filename.');
-    }
+$filename = basename($filename);
+if (!preg_match('/^[A-Za-z0-9._-]+$/', $filename)) {
+    http_response_code(400);
+    exit('Invalid filename.');
 }
 
-$email = $_SESSION['email'];
-
-$imageHandler = new ImageHandler();
-$result = $imageHandler->deleteImage($filename, $email);
+$config = Container::config();
+$service = new ImageService(Container::db(), $config, __DIR__ . '/../uploads');
+$result = $service->delete($filename, $_SESSION['email']);
 
 header('Location: ../main.php?message=' . urlencode($result));
 exit();

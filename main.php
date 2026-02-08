@@ -1,11 +1,13 @@
 <?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/includes/session_config.php';
 require_once __DIR__ . '/includes/csrf.php';
-require_once 'Classes/Databasehandler.php';
 
-$dbHandler = Databasehandler::getInstance();
-$pdo = $dbHandler->connect();
+use App\Container;
 
+$pdo = Container::db();
 ?>
 
 <!DOCTYPE HTML>
