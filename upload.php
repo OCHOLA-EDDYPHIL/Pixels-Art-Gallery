@@ -1,5 +1,6 @@
 <?php
-session_start(); // Start or resume a session
+require_once __DIR__ . '/includes/session_config.php';
+require_once __DIR__ . '/includes/csrf.php';
 
 // Check if user is not logged in, redirect to login page
 if (!isset($_SESSION['email'])) {
@@ -19,6 +20,7 @@ if (!isset($_SESSION['email'])) {
 </head>
 <body>
 <form action="includes/upload.inc.php" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
     <p id="heading">Post your photo</p> <!-- Heading of the form -->
     <?php
 

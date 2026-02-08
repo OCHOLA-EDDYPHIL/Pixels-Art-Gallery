@@ -82,20 +82,18 @@ class ImageHandler extends Databasehandler
      */
     public function uploadImage(array $file): bool|array|string
     {
-        // Validate the image file
         $validationResult = $this->validateImage($file);
-        if ($validationResult !== true) {
+        if (is_string($validationResult)) {
             return $validationResult;
         }
 
-        // Generate a unique file name and upload the file
-        $uniqueFileName = $this->generateUniqueFileName($file["name"]);
+        $uniqueFileName = $validationResult['filename'];
         $targetFilePath = $this->targetDir . $uniqueFileName;
         if (move_uploaded_file($file["tmp_name"], $targetFilePath)) {
             return ['success' => true, 'fileName' => $uniqueFileName];
-        } else {
-            return "Sorry, there was an error uploading your file.";
         }
+
+        return "Sorry, there was an error uploading your file.";
     }
 
     /**
@@ -114,29 +112,36 @@ class ImageHandler extends Databasehandler
      *                     appropriate error message is returned. This message can be used to inform the user about
      *                     the specific reason their upload was rejected.
      */
-    public function validateImage(array $file): bool|string
+    public function validateImage(array $file): bool|array|string
     {
-        // Check if the file is an image by attempting to get its size and type.
-        // This is done using the getimagesize() function, which returns false if the file is not an image.
-        $check = getimagesize($file["tmp_name"]);
-        if ($check === false) {
-            return "File is not an image."; // Return an error if the file is not an image.
+        if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+            return "Upload error occurred.";
         }
 
-        // Check if the file size exceeds the maximum allowed size.
-        // This is important to prevent users from uploading excessively large files that could strain server resources.
         if ($file["size"] > $this->maxFileSize) {
-            return "Sorry, your file is too large."; // Return an error if the file is too large.
+            return "Sorry, your file is too large.";
         }
 
-        // Check if the file's type (extension) is among the allowed types.
-        // This helps ensure that only supported image formats are uploaded, enhancing security and compatibility.
-        $imageFileType = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
-        if (!in_array($imageFileType, $this->allowedFileTypes)) {
-            return "Sorry, only JPG, JPEG, PNG files are allowed."; // Return an error if the file type is not allowed.
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->file($file["tmp_name"]);
+        $allowedMimes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+        ];
+
+        if (!isset($allowedMimes[$mimeType])) {
+            return "Invalid file type. Only JPG and PNG allowed.";
         }
 
-        return true; // Return true if all checks pass, indicating the file is a valid image.
+        $imageInfo = getimagesize($file["tmp_name"]);
+        if ($imageInfo === false) {
+            return "File is not an image.";
+        }
+
+        $extension = $allowedMimes[$mimeType];
+        $filename = bin2hex(random_bytes(16)) . '.' . $extension;
+
+        return ['success' => true, 'filename' => $filename];
     }
 
     /**

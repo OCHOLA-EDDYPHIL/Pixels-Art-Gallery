@@ -1,6 +1,5 @@
 <?php
-session_start(); // Ensure session is started
-
+require_once __DIR__ . '/../includes/session_config.php';
 require_once 'Databasehandler.php'; // Include the Databasehandler class
 
 /**

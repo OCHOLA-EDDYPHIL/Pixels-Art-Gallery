@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/includes/session_config.php';
+require_once __DIR__ . '/includes/csrf.php';
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -12,6 +16,7 @@
 
 <div class="login-box">
     <form action="includes/shortener.inc.php" method="POST">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
         <div class="user-box">
             <input type="url" name="longUrl" required>
             <label>Long Url</label>

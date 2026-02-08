@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session_config.php';
+require_once __DIR__ . '/includes/csrf.php';
 require_once 'Classes/Databasehandler.php';
 
 $dbHandler = Databasehandler::getInstance();
@@ -43,6 +44,7 @@ $pdo = $dbHandler->connect();
         if (isset($_SESSION['email'])) {
             echo "Logged in as: " . htmlspecialchars($_SESSION['email']);
             echo '<form action="includes/logout.inc.php" method="post">
+            <input type="hidden" name="csrf_token" value="' . htmlspecialchars(generateCsrfToken()) . '"/>
             <button type="submit">Logout</button>
           </form>
         <a href="upload.php" class="upload-link">Upload Photo</a>';
@@ -67,6 +69,7 @@ $pdo = $dbHandler->connect();
                 // Check if the logged-in user is the uploader of the image
                 if (isset($_SESSION['email']) && $_SESSION['email'] === $image['user_id']) {
                     echo '<form action="includes/delete_image.inc.php" method="post">
+                    <input type="hidden" name="csrf_token" value="' . htmlspecialchars(generateCsrfToken()) . '"/>
                     <input type="hidden" name="filename" value="' . htmlspecialchars($image['filename']) . '"/>
                     <button type="submit">Delete</button>
                   </form>';

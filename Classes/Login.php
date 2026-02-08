@@ -1,6 +1,5 @@
 <?php
-// Starts a new session or resumes an existing session
-session_start();
+require_once __DIR__ . '/../includes/session_config.php';
 
 /**
  * The Login class extends the Databasehandler class to provide user authentication functionality.
@@ -60,6 +59,7 @@ class Login extends Databasehandler
         }
 
         // On successful login, set the user's email in the session and redirect to the main page
+        session_regenerate_id(true);
         $_SESSION['email'] = $this->email;
         header("Location: ../main.php");
         exit();

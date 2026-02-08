@@ -1,6 +1,6 @@
 <?php
-// Start a new session or resume the existing one
-session_start();
+require_once __DIR__ . '/session_config.php';
+require_once __DIR__ . '/csrf.php';
 
 // Check if the user's email is set in the session, redirect and exit if not
 if (!isset($_SESSION['email'])) {
@@ -12,16 +12,26 @@ if (!isset($_SESSION['email'])) {
 require_once '../Classes/Databasehandler.php';
 require_once '../Classes/ImageHandler.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed.');
+}
+
+if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    http_response_code(403);
+    exit('Invalid CSRF token');
+}
+
 // Ensure both the submit action and file upload are set, exit if not
-if (!isset($_POST['submit'], $_FILES['fileToUpload'])) {
+if (!isset($_FILES['fileToUpload'])) {
     exit("No file or caption provided.");
 }
 
 // Get an instance of the Databasehandler class
 $dbHandler = Databasehandler::getInstance();
 
-// Create a new ImageHandler object with the database handler
-$imageUploader = new ImageHandler($dbHandler);
+// Create a new ImageHandler object
+$imageUploader = new ImageHandler();
 
 // Assign the uploaded file to a variable
 $file = $_FILES['fileToUpload'];

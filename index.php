@@ -1,6 +1,6 @@
 <?php
-// Start or resume a session
-session_start();
+require_once __DIR__ . '/includes/session_config.php';
+require_once __DIR__ . '/includes/csrf.php';
 
 // if user is logged in redirect to main page
 if (isset($_SESSION['email'])) {
@@ -38,6 +38,7 @@ if (isset($_SESSION['email'])) {
         <?php endif; ?>
         <!-- Login form -->
         <form action="includes/login.inc.php" method="post">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
             <h2>Welcome</h2>
             <label>
                 <span>Email</span>
@@ -78,14 +79,15 @@ if (isset($_SESSION['email'])) {
                 <?php endforeach; ?>
                 <!-- Clear signup errors after displaying them -->
                 <?php unset($_SESSION['signup_errors']); ?>
-            <?php endif; ?>
-            <!-- Signup form -->
-            <form action="includes/signup.inc.php" method="post" id="signupForm">
-                <h2>Create your Account</h2>
-                <label>
-                    <span>Email</span>
-                    <input type="email" name="email"/>
-                </label>
+        <?php endif; ?>
+        <!-- Signup form -->
+        <form action="includes/signup.inc.php" method="post" id="signupForm">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+            <h2>Create your Account</h2>
+            <label>
+                <span>Email</span>
+                <input type="email" name="email"/>
+            </label>
                 <label>
                     <span>Password</span>
                     <input type="password" name="pwd" id="pwd"/>

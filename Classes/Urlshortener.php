@@ -30,8 +30,18 @@ class Urlshortener extends Databasehandler
      */
     public function shortenURL(string $longUrl): string
     {
+        $sanitizedUrl = filter_var($longUrl, FILTER_SANITIZE_URL);
+        if (!filter_var($sanitizedUrl, FILTER_VALIDATE_URL)) {
+            return 'Invalid URL';
+        }
+
+        $scheme = parse_url($sanitizedUrl, PHP_URL_SCHEME);
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return 'Only http/https URLs allowed';
+        }
+
         $shortCode = $this->generateShortCode();
-        $this->storeURL($longUrl, $shortCode);
+        $this->storeURL($sanitizedUrl, $shortCode);
         return $shortCode;
     }
 
@@ -44,7 +54,19 @@ class Urlshortener extends Databasehandler
      */
     protected function generateShortCode(): string
     {
-        return substr(md5(uniqid(rand(), true)), 0, 6);
+        $attempts = 0;
+        do {
+            $attempts++;
+            $code = substr(bin2hex(random_bytes(4)), 0, 6);
+            $stmt = $this->pdo->prepare("SELECT 1 FROM urls WHERE short_code = ?");
+            $stmt->execute([$code]);
+        } while ($stmt->fetchColumn() && $attempts < 5);
+
+        if ($attempts >= 5) {
+            throw new RuntimeException('Failed to generate unique short code');
+        }
+
+        return $code;
     }
 
     /**

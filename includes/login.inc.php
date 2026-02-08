@@ -1,16 +1,22 @@
 <?php
-// Check if the server request method is POST, indicating form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve user's email and password from POST data
-    $email = $_POST['email']; // User's email
-    $pwd = $_POST['pwd']; // User's password
+require_once __DIR__ . '/session_config.php';
+require_once __DIR__ . '/csrf.php';
 
-    // Include the necessary classes for database handling and user login
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        exit('Invalid CSRF token');
+    }
+
+    $email = $_POST['email'] ?? '';
+    $pwd = $_POST['pwd'] ?? '';
+
     require_once "../Classes/Databasehandler.php";
     require_once "../Classes/Login.php";
 
-    // Instantiate a new Login object with user's email and password
     $Login = new Login($email, $pwd);
-    // Attempt to log the user in with the provided credentials
     $Login->loginUser();
+} else {
+    http_response_code(405);
+    exit('Method not allowed');
 }
