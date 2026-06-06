@@ -29,7 +29,7 @@
         <p>Welcome to the art show</p>
         <?php if ($currentUserEmail !== null): ?>
             Logged in as: <?php echo htmlspecialchars((string) $currentUserEmail, ENT_QUOTES, 'UTF-8'); ?>
-            <form action="/logout" method="post">
+            <form action="/includes/logout.inc.php" method="post">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>"/>
                 <button type="submit">Logout</button>
             </form>
@@ -52,7 +52,7 @@
                 <h2><?php echo htmlspecialchars($image['user_id'], ENT_QUOTES, 'UTF-8'); ?></h2>
                 <p><?php echo htmlspecialchars($image['caption'], ENT_QUOTES, 'UTF-8'); ?></p>
                 <?php if ($currentUserEmail !== null && $currentUserEmail === $image['user_id']): ?>
-                    <form action="/images/delete" method="post">
+                    <form action="/includes/delete_image.inc.php" method="post">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>"/>
                         <input type="hidden" name="filename" value="<?php echo htmlspecialchars($image['filename'], ENT_QUOTES, 'UTF-8'); ?>"/>
                         <button type="submit">Delete</button>

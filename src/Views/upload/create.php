@@ -9,7 +9,7 @@
     <title>Upload Photos</title>
 </head>
 <body>
-<form action="/upload" method="post" enctype="multipart/form-data">
+<form action="/includes/upload.inc.php" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
     <p id="heading">Post your photo</p>
     Logged in as: <?php echo htmlspecialchars((string) $email, ENT_QUOTES, 'UTF-8'); ?>

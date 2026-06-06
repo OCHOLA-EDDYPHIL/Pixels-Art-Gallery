@@ -11,7 +11,7 @@
 <body>
 
 <div class="login-box">
-    <form action="/shorten" method="POST">
+    <form action="/includes/shortener.inc.php" method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
         <div class="user-box">
             <input type="url" name="longUrl" required>

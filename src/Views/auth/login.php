@@ -17,7 +17,7 @@
                 <div class="error-message"><?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endforeach; ?>
         <?php endif; ?>
-        <form action="/login" method="post">
+        <form action="/includes/login.inc.php" method="post">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
             <h2>Welcome</h2>
             <label>
@@ -51,7 +51,7 @@
                     <div class="error-message"><?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
                 <?php endforeach; ?>
             <?php endif; ?>
-            <form action="/signup" method="post" id="signupForm">
+            <form action="/includes/signup.inc.php" method="post" id="signupForm">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                 <h2>Create your Account</h2>
                 <label>

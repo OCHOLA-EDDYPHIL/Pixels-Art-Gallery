@@ -42,7 +42,7 @@ final class UrlController extends BaseController
             return Response::text($shortCode, 400);
         }
 
-        $shortUrl = rtrim($baseUrl, '/') . '/r?c=' . rawurlencode($shortCode);
+        $shortUrl = rtrim($baseUrl, '/') . '/includes/redirect.inc.php?c=' . rawurlencode($shortCode);
         $escapedUrl = htmlspecialchars($shortUrl, ENT_QUOTES, 'UTF-8');
 
         return Response::html('Short URL: <a href="' . $escapedUrl . '">' . $escapedUrl . '</a>');
