@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Repositories\UserRepository;
 use App\Utils\Session;
 use App\Utils\Validator;
-use PDO;
 
 final class AuthService
 {
-    public function __construct(private readonly PDO $db)
+    public function __construct(private readonly UserRepository $users)
     {
     }
 
@@ -30,7 +30,7 @@ final class AuthService
             $errors = array_merge($errors, $pwErrors);
         }
 
-        if ($this->emailExists($email)) {
+        if ($this->users->findByEmail($email) !== null) {
             $errors[] = 'Email already registered';
         }
 
@@ -38,11 +38,7 @@ final class AuthService
             return $errors;
         }
 
-        $stmt = $this->db->prepare('INSERT INTO users (email_address, pwd) VALUES (:email, :pwd)');
-        $stmt->execute([
-            ':email' => $email,
-            ':pwd' => password_hash($password, PASSWORD_DEFAULT),
-        ]);
+        $this->users->createUser($email, password_hash($password, PASSWORD_DEFAULT));
 
         return [];
     }
@@ -52,9 +48,7 @@ final class AuthService
      */
     public function login(string $email, string $password): array
     {
-        $stmt = $this->db->prepare('SELECT pwd FROM users WHERE email_address = :email');
-        $stmt->execute([':email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $this->users->findByEmail($email);
 
         if (!$user || !password_verify($password, $user['pwd'])) {
             return ['Invalid email or password'];
@@ -70,12 +64,5 @@ final class AuthService
     public function logout(): void
     {
         Session::destroy();
-    }
-
-    private function emailExists(string $email): bool
-    {
-        $stmt = $this->db->prepare('SELECT 1 FROM users WHERE email_address = :email');
-        $stmt->execute([':email' => $email]);
-        return (bool) $stmt->fetchColumn();
     }
 }

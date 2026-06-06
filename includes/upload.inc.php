@@ -6,7 +6,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/session_config.php';
 require_once __DIR__ . '/csrf.php';
 
-use App\Config\Config;
 use App\Container;
 use App\Services\ImageService;
 
@@ -34,7 +33,7 @@ $email = $_SESSION['email'];
 
 $config = Container::config();
 $uploadDir = __DIR__ . '/../uploads';
-$service = new ImageService(Container::db(), $config, $uploadDir);
+$service = new ImageService(Container::photos(), $config, $uploadDir);
 $result = $service->upload($_FILES['fileToUpload'], $caption, $email);
 
 if ($result['success'] === false) {

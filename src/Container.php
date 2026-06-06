@@ -6,6 +6,9 @@ namespace App;
 
 use App\Config\Config;
 use App\Database\Connection;
+use App\Repositories\PhotoRepository;
+use App\Repositories\UrlRepository;
+use App\Repositories\UserRepository;
 use PDO;
 
 final class Container
@@ -30,5 +33,20 @@ final class Container
         }
 
         return self::$db;
+    }
+
+    public static function users(): UserRepository
+    {
+        return new UserRepository(self::db());
+    }
+
+    public static function photos(): PhotoRepository
+    {
+        return new PhotoRepository(self::db());
+    }
+
+    public static function urls(): UrlRepository
+    {
+        return new UrlRepository(self::db());
     }
 }

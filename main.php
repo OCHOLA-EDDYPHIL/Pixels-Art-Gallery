@@ -7,7 +7,7 @@ require_once __DIR__ . '/includes/csrf.php';
 
 use App\Container;
 
-$pdo = Container::db();
+$photoRepository = Container::photos();
 ?>
 
 <!DOCTYPE HTML>
@@ -61,8 +61,7 @@ $pdo = Container::db();
     <section id="thumbnails">
         <?php
         try {
-            $stmt = $pdo->query("SELECT filename, caption, user_id FROM photos"); // Ensure this matches your actual table and columns
-            $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $images = $photoRepository->allPhotos();
             foreach ($images as $image) {
                 echo '<article class="image-container">';
                 echo '<a class="thumbnail" href="uploads/' . htmlspecialchars($image['filename']) . '"><img src="uploads/' . htmlspecialchars($image['filename']) . '" alt="' . htmlspecialchars($image['caption']) . '"/></a>';

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!empty($_POST['longUrl'])) {
-        $urlShortener = new UrlService(Container::db());
+        $urlShortener = new UrlService(Container::urls());
         $shortCode = $urlShortener->shorten($_POST['longUrl']);
         if (!preg_match('/^[a-f0-9]{6}$/i', $shortCode)) {
             http_response_code(400);

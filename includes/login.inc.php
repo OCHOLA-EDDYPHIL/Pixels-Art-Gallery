@@ -22,7 +22,7 @@ if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
 $email = trim($_POST['email'] ?? '');
 $pwd = $_POST['pwd'] ?? '';
 
-$auth = new AuthService(Container::db());
+$auth = new AuthService(Container::users());
 $errors = $auth->login($email, $pwd);
 
 if (!empty($errors)) {
