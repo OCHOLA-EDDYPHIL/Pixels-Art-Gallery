@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session_config.php';
-require_once __DIR__ . '/includes/csrf.php';
+
+use App\Utils\Csrf;
 ?>
 <!doctype html>
 <html lang="en">
@@ -18,7 +19,7 @@ require_once __DIR__ . '/includes/csrf.php';
 
 <div class="login-box">
     <form action="includes/shortener.inc.php" method="POST">
-        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Csrf::token()); ?>">
         <div class="user-box">
             <input type="url" name="longUrl" required>
             <label>Long Url</label>

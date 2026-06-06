@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session_config.php';
-require_once __DIR__ . '/includes/csrf.php';
+
+use App\Utils\Csrf;
 
 // if user is logged in redirect to main page
 if (isset($_SESSION['email'])) {
@@ -40,7 +41,7 @@ if (isset($_SESSION['email'])) {
         <?php endif; ?>
         <!-- Login form -->
         <form action="includes/login.inc.php" method="post">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Csrf::token()); ?>">
             <h2>Welcome</h2>
             <label>
                 <span>Email</span>
@@ -84,7 +85,7 @@ if (isset($_SESSION['email'])) {
         <?php endif; ?>
         <!-- Signup form -->
         <form action="includes/signup.inc.php" method="post" id="signupForm">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Csrf::token()); ?>">
             <h2>Create your Account</h2>
             <label>
                 <span>Email</span>
