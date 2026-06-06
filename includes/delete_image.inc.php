@@ -6,7 +6,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/session_config.php';
 require_once __DIR__ . '/csrf.php';
 
-use App\Config\Config;
 use App\Container;
 use App\Services\ImageService;
 
@@ -33,7 +32,7 @@ if (!preg_match('/^[A-Za-z0-9._-]+$/', $filename)) {
 }
 
 $config = Container::config();
-$service = new ImageService(Container::db(), $config, __DIR__ . '/../uploads');
+$service = new ImageService(Container::photos(), $config, __DIR__ . '/../uploads');
 $result = $service->delete($filename, $_SESSION['email']);
 
 header('Location: ../main.php?message=' . urlencode($result));

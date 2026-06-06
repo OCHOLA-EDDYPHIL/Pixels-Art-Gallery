@@ -10,7 +10,7 @@ use App\Services\UrlService;
 // Check if 'c' parameter is set in the URL
 if (isset($_GET['c'])) {
     $shortCode = $_GET['c']; // The short code passed in the URL
-    $urlShortener = new UrlService(Container::db());
+    $urlShortener = new UrlService(Container::urls());
 
     // Retrieve the long URL from the database using the short code
     $longUrl = $urlShortener->resolve($shortCode);

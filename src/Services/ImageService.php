@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Config\Config;
-use PDO;
-use RuntimeException;
+use App\Repositories\PhotoRepository;
 
 final class ImageService
 {
     public function __construct(
-        private readonly PDO $db,
+        private readonly PhotoRepository $photos,
         private readonly Config $config,
         private readonly string $uploadPath
     ) {
@@ -37,23 +36,18 @@ final class ImageService
             return ['success' => false, 'message' => 'Failed to save file'];
         }
 
-        $stmt = $this->db->prepare('INSERT INTO photos (filename, caption, user_id) VALUES (?, ?, ?)');
-        $stmt->execute([$filename, $caption, $email]);
+        $this->photos->createPhoto($filename, $caption, $email);
 
         return ['success' => true, 'message' => 'Image uploaded', 'filename' => $filename];
     }
 
     public function delete(string $filename, string $email): string
     {
-        $stmt = $this->db->prepare('SELECT filename FROM photos WHERE filename = ? AND user_id = ?');
-        $stmt->execute([$filename, $email]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$row) {
+        if ($this->photos->findOwnedPhoto($filename, $email) === null) {
             return 'You do not have permission to delete this image or it does not exist.';
         }
 
-        $deleteStmt = $this->db->prepare('DELETE FROM photos WHERE filename = ? AND user_id = ?');
-        $deleteStmt->execute([$filename, $email]);
+        $this->photos->deleteOwnedPhoto($filename, $email);
 
         $path = rtrim($this->uploadPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
         if (is_file($path)) {
