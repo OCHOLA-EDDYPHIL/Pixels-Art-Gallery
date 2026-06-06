@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session_config.php';
-require_once __DIR__ . '/includes/csrf.php';
+
+use App\Utils\Csrf;
 
 // Check if user is not logged in, redirect to login page
 if (!isset($_SESSION['email'])) {
@@ -22,7 +23,7 @@ if (!isset($_SESSION['email'])) {
 </head>
 <body>
 <form action="includes/upload.inc.php" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Csrf::token()); ?>">
     <p id="heading">Post your photo</p> <!-- Heading of the form -->
     <?php
 

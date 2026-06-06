@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/includes/session_config.php';
-require_once __DIR__ . '/includes/csrf.php';
 
+use App\Utils\Csrf;
 use App\Container;
 
 $pdo = Container::db();
@@ -46,7 +46,7 @@ $pdo = Container::db();
         if (isset($_SESSION['email'])) {
             echo "Logged in as: " . htmlspecialchars($_SESSION['email']);
             echo '<form action="includes/logout.inc.php" method="post">
-            <input type="hidden" name="csrf_token" value="' . htmlspecialchars(generateCsrfToken()) . '"/>
+            <input type="hidden" name="csrf_token" value="' . htmlspecialchars(Csrf::token()) . '"/>
             <button type="submit">Logout</button>
           </form>
         <a href="upload.php" class="upload-link">Upload Photo</a>';
@@ -71,7 +71,7 @@ $pdo = Container::db();
                 // Check if the logged-in user is the uploader of the image
                 if (isset($_SESSION['email']) && $_SESSION['email'] === $image['user_id']) {
                     echo '<form action="includes/delete_image.inc.php" method="post">
-                    <input type="hidden" name="csrf_token" value="' . htmlspecialchars(generateCsrfToken()) . '"/>
+                    <input type="hidden" name="csrf_token" value="' . htmlspecialchars(Csrf::token()) . '"/>
                     <input type="hidden" name="filename" value="' . htmlspecialchars($image['filename']) . '"/>
                     <button type="submit">Delete</button>
                   </form>';

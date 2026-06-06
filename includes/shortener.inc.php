@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/session_config.php';
-require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/../config.php';
 
+use App\Utils\Csrf;
 use App\Container;
 use App\Services\UrlService;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
         http_response_code(403);
         exit('Invalid CSRF token');
     }
