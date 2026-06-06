@@ -8,15 +8,14 @@ require_once __DIR__ . '/csrf.php';
 
 use App\Container;
 use App\Services\AuthService;
+use App\Utils\Response;
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405);
-    exit('Method not allowed');
+    Response::error('Method not allowed.', 405)->send();
 }
 
 if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-    http_response_code(403);
-    exit('Invalid CSRF token');
+    Response::error('Invalid CSRF token.', 403)->send();
 }
 
 $email = trim($_POST['email'] ?? '');
@@ -27,9 +26,7 @@ $errors = $auth->login($email, $pwd);
 
 if (!empty($errors)) {
     $_SESSION['login_errors'] = $errors;
-    header("Location: ../index.php");
-    exit();
+    Response::redirect('../index.php')->send();
 }
 
-header("Location: ../main.php");
-exit();
+Response::redirect('../main.php')->send();

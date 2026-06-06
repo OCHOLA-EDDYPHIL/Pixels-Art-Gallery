@@ -1,13 +1,15 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/includes/session_config.php';
 require_once __DIR__ . '/includes/csrf.php';
 
+use App\Utils\Response;
+
 // if user is logged in redirect to main page
 if (isset($_SESSION['email'])) {
-    header('Location: main.php');
-    exit();
+    Response::redirect('main.php')->send();
 }
 ?>
 <!DOCTYPE html>

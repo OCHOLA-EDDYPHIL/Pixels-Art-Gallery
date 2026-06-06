@@ -1,13 +1,15 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/includes/session_config.php';
 require_once __DIR__ . '/includes/csrf.php';
 
+use App\Utils\Response;
+
 // Check if user is not logged in, redirect to login page
 if (!isset($_SESSION['email'])) {
-    header('Location: index.php'); // Redirect to login page if no email session exists
-    exit(); // Stop script execution after redirection
+    Response::redirect('index.php')->send();
 }
 ?>
 <!DOCTYPE html>
