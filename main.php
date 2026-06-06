@@ -6,8 +6,20 @@ require_once __DIR__ . '/includes/session_config.php';
 require_once __DIR__ . '/includes/csrf.php';
 
 use App\Container;
+use App\Utils\Response;
 
-$pdo = Container::db();
+$images = [];
+$galleryLoadError = false;
+
+try {
+    $stmt = Container::db()->query('SELECT filename, caption, user_id FROM photos');
+    $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    Container::logger()->error('Failed to load gallery images.', ['exception' => $e]);
+    $galleryLoadError = true;
+}
+
+ob_start();
 ?>
 
 <!DOCTYPE HTML>
@@ -59,29 +71,26 @@ $pdo = Container::db();
     </header>
     <!-- Thumbnail -->
     <section id="thumbnails">
-        <?php
-        try {
-            $stmt = $pdo->query("SELECT filename, caption, user_id FROM photos"); // Ensure this matches your actual table and columns
-            $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($images as $image) {
-                echo '<article class="image-container">';
-                echo '<a class="thumbnail" href="uploads/' . htmlspecialchars($image['filename']) . '"><img src="uploads/' . htmlspecialchars($image['filename']) . '" alt="' . htmlspecialchars($image['caption']) . '"/></a>';
-                echo '<h2>' . htmlspecialchars($image['user_id']) . '</h2>';
-                echo '<p>' . htmlspecialchars($image['caption']) . '</p>';
-                // Check if the logged-in user is the uploader of the image
-                if (isset($_SESSION['email']) && $_SESSION['email'] === $image['user_id']) {
-                    echo '<form action="includes/delete_image.inc.php" method="post">
-                    <input type="hidden" name="csrf_token" value="' . htmlspecialchars(generateCsrfToken()) . '"/>
-                    <input type="hidden" name="filename" value="' . htmlspecialchars($image['filename']) . '"/>
-                    <button type="submit">Delete</button>
-                  </form>';
-                }
-                echo '</article>';
-            }
-        } catch (PDOException $e) {
-            echo "Error: " . $e->getMessage();
-        }
-        ?>
+        <?php if ($galleryLoadError): ?>
+            <p class="error-message">We could not load the gallery right now. Please try again later.</p>
+        <?php endif; ?>
+        <?php foreach ($images as $image): ?>
+            <article class="image-container">
+                <a class="thumbnail" href="uploads/<?php echo htmlspecialchars($image['filename']); ?>">
+                    <img src="uploads/<?php echo htmlspecialchars($image['filename']); ?>"
+                         alt="<?php echo htmlspecialchars($image['caption']); ?>"/>
+                </a>
+                <h2><?php echo htmlspecialchars($image['user_id']); ?></h2>
+                <p><?php echo htmlspecialchars($image['caption']); ?></p>
+                <?php if (isset($_SESSION['email']) && $_SESSION['email'] === $image['user_id']): ?>
+                    <form action="includes/delete_image.inc.php" method="post">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>"/>
+                        <input type="hidden" name="filename" value="<?php echo htmlspecialchars($image['filename']); ?>"/>
+                        <button type="submit">Delete</button>
+                    </form>
+                <?php endif; ?>
+            </article>
+        <?php endforeach; ?>
     </section>
 
     <!-- Footer -->
@@ -124,3 +133,6 @@ $pdo = Container::db();
 
 </body>
 </html>
+
+<?php
+Response::html((string) ob_get_clean())->send();
