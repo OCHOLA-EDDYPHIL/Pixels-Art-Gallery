@@ -6,14 +6,15 @@ namespace App\Services;
 
 use App\Config\Config;
 use PDO;
-use RuntimeException;
+use Psr\Log\LoggerInterface;
 
 final class ImageService
 {
     public function __construct(
         private readonly PDO $db,
         private readonly Config $config,
-        private readonly string $uploadPath
+        private readonly string $uploadPath,
+        private readonly ?LoggerInterface $logger = null
     ) {
         if (!is_dir($this->uploadPath)) {
             mkdir($this->uploadPath, 0775, true);
@@ -43,24 +44,64 @@ final class ImageService
         return ['success' => true, 'message' => 'Image uploaded', 'filename' => $filename];
     }
 
-    public function delete(string $filename, string $email): string
+    /**
+     * @return array{
+     *     success: bool,
+     *     status: string,
+     *     message: string,
+     *     filename: string,
+     *     database_deleted: bool,
+     *     file_existed?: bool,
+     *     file_deleted?: bool
+     * }
+     */
+    public function delete(string $filename, string $email): array
     {
         $stmt = $this->db->prepare('SELECT filename FROM photos WHERE filename = ? AND user_id = ?');
         $stmt->execute([$filename, $email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) {
-            return 'You do not have permission to delete this image or it does not exist.';
+            return [
+                'success' => false,
+                'status' => 'not_found_or_unauthorized',
+                'message' => 'You do not have permission to delete this image or it does not exist.',
+                'filename' => $filename,
+                'database_deleted' => false,
+            ];
         }
 
         $deleteStmt = $this->db->prepare('DELETE FROM photos WHERE filename = ? AND user_id = ?');
         $deleteStmt->execute([$filename, $email]);
 
         $path = rtrim($this->uploadPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
-        if (is_file($path)) {
-            @unlink($path);
+        $fileExisted = is_file($path);
+        if ($fileExisted && !unlink($path)) {
+            $this->logger?->error('Image database record deleted, but file deletion failed.', [
+                'filename' => $filename,
+                'path' => $path,
+                'user_id' => $email,
+            ]);
+
+            return [
+                'success' => false,
+                'status' => 'file_delete_failed',
+                'message' => 'Image database record deleted, but the file could not be removed.',
+                'filename' => $filename,
+                'database_deleted' => true,
+                'file_existed' => true,
+                'file_deleted' => false,
+            ];
         }
 
-        return 'Image deleted successfully.';
+        return [
+            'success' => true,
+            'status' => 'complete_success',
+            'message' => 'Image deleted successfully.',
+            'filename' => $filename,
+            'database_deleted' => true,
+            'file_existed' => $fileExisted,
+            'file_deleted' => $fileExisted,
+        ];
     }
 
     /**

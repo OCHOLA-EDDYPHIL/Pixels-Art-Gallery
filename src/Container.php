@@ -6,12 +6,16 @@ namespace App;
 
 use App\Config\Config;
 use App\Database\Connection;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 final class Container
 {
     private static ?Config $config = null;
     private static ?PDO $db = null;
+    private static ?LoggerInterface $logger = null;
 
     public static function config(): Config
     {
@@ -30,5 +34,22 @@ final class Container
         }
 
         return self::$db;
+    }
+
+    public static function logger(): LoggerInterface
+    {
+        if (self::$logger === null) {
+            $rootPath = dirname(__DIR__, 1);
+            $logPath = $rootPath . DIRECTORY_SEPARATOR . 'logs';
+            if (!is_dir($logPath)) {
+                mkdir($logPath, 0775, true);
+            }
+
+            $logger = new Logger('app');
+            $logger->pushHandler(new StreamHandler($logPath . DIRECTORY_SEPARATOR . 'app.log'));
+            self::$logger = $logger;
+        }
+
+        return self::$logger;
     }
 }
