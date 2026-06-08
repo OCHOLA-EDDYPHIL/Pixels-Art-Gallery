@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Config\Config;
 use PDO;
 use RuntimeException;
+use Throwable;
 
 final class ImageService
 {
@@ -37,8 +38,34 @@ final class ImageService
             return ['success' => false, 'message' => 'Failed to save file'];
         }
 
-        $stmt = $this->db->prepare('INSERT INTO photos (filename, caption, user_id) VALUES (?, ?, ?)');
-        $stmt->execute([$filename, $caption, $email]);
+        try {
+            if ($this->db->beginTransaction() === false) {
+                throw new RuntimeException('Failed to start image metadata transaction');
+            }
+
+            $stmt = $this->db->prepare('INSERT INTO photos (filename, caption, user_id) VALUES (?, ?, ?)');
+            if ($stmt->execute([$filename, $caption, $email]) === false) {
+                throw new RuntimeException('Failed to save image metadata');
+            }
+
+            if ($this->db->commit() === false) {
+                throw new RuntimeException('Failed to commit image metadata transaction');
+            }
+        } catch (Throwable $exception) {
+            if ($this->db->inTransaction()) {
+                try {
+                    $this->db->rollBack();
+                } catch (Throwable) {
+                    // Preserve the original upload failure while still cleaning up the moved file.
+                }
+            }
+
+            if (is_file($target)) {
+                @unlink($target);
+            }
+
+            throw $exception;
+        }
 
         return ['success' => true, 'message' => 'Image uploaded', 'filename' => $filename];
     }
