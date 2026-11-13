@@ -1,6 +1,6 @@
 -- Pixels / IS project1 — database schema
--- Target database is provided by the caller (CNS 3205 Lab 2 uses `Lab2`).
--- Run with:  sudo mariadb Lab2 < database/schema.sql
+-- Target database is provided by the caller (this deployment uses `CAT2`).
+-- Run with:  sudo mariadb CAT2 < database/schema.sql
 --
 -- Engine/charset chosen for utf8mb4 (full Unicode) and InnoDB (transactions,
 -- foreign keys, row-level locking).
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS urls (
     INDEX idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- CNS 3205 Lab 2, Part B #7: a second simple form backed by its own table.
+-- Part B item 7: a second simple form backed by its own table.
 -- The feedback form POSTs here and the page reads the rows back out.
 CREATE TABLE IF NOT EXISTS feedback (
     id         INT AUTO_INCREMENT PRIMARY KEY,

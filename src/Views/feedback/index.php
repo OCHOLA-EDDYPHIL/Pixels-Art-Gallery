@@ -33,7 +33,7 @@
 <main>
     <div class="eyebrow">CNS 3205 Server Administration</div>
     <h1>Share your feedback</h1>
-    <p class="lead">A second form backed by its own <code>feedback</code> table in the <code>Lab2</code> database.</p>
+    <p class="lead">A second form backed by its own <code>feedback</code> table in the <code>CAT2</code> database.</p>
 
     <div class="card">
         <?php if ($success !== null): ?>
