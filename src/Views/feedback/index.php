@@ -31,7 +31,7 @@
 </head>
 <body>
 <main>
-    <div class="eyebrow">CNS 3205 Server Administration — Lab 2</div>
+    <div class="eyebrow">CNS 3205 Server Administration</div>
     <h1>Share your feedback</h1>
     <p class="lead">A second form backed by its own <code>feedback</code> table in the <code>Lab2</code> database.</p>
 
