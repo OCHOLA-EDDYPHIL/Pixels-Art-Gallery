@@ -17,12 +17,17 @@ final class AuthService
     /**
      * @return string[] errors
      */
-    public function signup(string $email, string $password): array
+    public function signup(string $email, string $password, string $username = ''): array
     {
         $errors = [];
 
         if (!Validator::email($email)) {
             $errors[] = 'Invalid email address';
+        }
+
+        $username = trim($username);
+        if ($username !== '' && mb_strlen($username) > 50) {
+            $errors[] = 'Username must be 50 characters or fewer';
         }
 
         $pwErrors = Validator::password($password);
@@ -38,8 +43,11 @@ final class AuthService
             return $errors;
         }
 
-        $stmt = $this->db->prepare('INSERT INTO users (email_address, pwd) VALUES (:email, :pwd)');
+        $stmt = $this->db->prepare(
+            'INSERT INTO users (username, email_address, pwd) VALUES (:username, :email, :pwd)'
+        );
         $stmt->execute([
+            ':username' => $username !== '' ? $username : null,
             ':email' => $email,
             ':pwd' => password_hash($password, PASSWORD_DEFAULT),
         ]);

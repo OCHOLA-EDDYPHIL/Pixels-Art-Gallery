@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 use App\Container;
 use App\Controllers\AuthController;
+use App\Controllers\FeedbackController;
 use App\Controllers\GalleryController;
 use App\Controllers\UploadController;
 use App\Controllers\UrlController;
 use App\Router;
 use App\Services\AuthService;
+use App\Services\FeedbackService;
 use App\Services\ImageService;
 use App\Services\UrlService;
 use App\Utils\Response;
@@ -80,8 +82,10 @@ if ($static !== null) {
 $authServiceFactory = fn (): AuthService => new AuthService(Container::db());
 $imageServiceFactory = fn (): ImageService => new ImageService(Container::db(), Container::config(), $rootPath . '/uploads');
 $urlServiceFactory = fn (): UrlService => new UrlService(Container::db());
+$feedbackServiceFactory = fn (): FeedbackService => new FeedbackService(Container::db());
 
 $authController = new AuthController($authServiceFactory);
+$feedbackController = new FeedbackController($feedbackServiceFactory);
 $galleryControllerFactory = fn (): GalleryController => new GalleryController(Container::db());
 $uploadController = new UploadController($imageServiceFactory);
 $urlController = new UrlController($urlServiceFactory);
@@ -106,6 +110,11 @@ $router->post('/upload', fn (): Response => $uploadController->store($_POST, $_F
 $router->post('/includes/upload.inc.php', fn (): Response => $uploadController->store($_POST, $_FILES));
 $router->post('/images/delete', fn (): Response => $uploadController->destroy($_POST));
 $router->post('/includes/delete_image.inc.php', fn (): Response => $uploadController->destroy($_POST));
+
+$router->get('/feedback', fn (): Response => $feedbackController->index());
+$router->get('/feedback.php', fn (): Response => $feedbackController->index());
+$router->post('/feedback', fn (): Response => $feedbackController->submit($_POST));
+$router->post('/includes/feedback.inc.php', fn (): Response => $feedbackController->submit($_POST));
 
 $router->get('/shorten.php', fn (): Response => $urlController->create());
 $router->get('/shorten', fn (): Response => $urlController->create());

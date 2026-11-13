@@ -34,6 +34,7 @@
                 <button type="submit">Logout</button>
             </form>
             <a href="/upload.php" class="upload-link">Upload Photo</a>
+            <a href="/feedback" class="upload-link" style="background-color:#315ea8;">Feedback</a>
         <?php else: ?>
             <form action="/index.php" method="get">
                 <button type="submit">Login</button>

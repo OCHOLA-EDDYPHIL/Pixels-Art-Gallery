@@ -7,11 +7,18 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Welcome</title>
     <link rel="stylesheet" href="/assets/css/index.css">
+    <style>
+        .success-message { background: #e6f6ec; border: 1px solid #a6e0bd; color: #08783e;
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 10px; font-size: 14px; }
+    </style>
 </head>
 <body>
 
 <div class="cont <?php echo !empty($signupErrors) ? 's--signup' : ''; ?>">
     <div class="form sign-in">
+        <?php if (!empty($signupSuccess)): ?>
+            <div class="success-message"><?php echo htmlspecialchars((string) $signupSuccess, ENT_QUOTES, 'UTF-8'); ?></div>
+        <?php endif; ?>
         <?php if (!empty($loginErrors)): ?>
             <?php foreach ($loginErrors as $error): ?>
                 <div class="error-message"><?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
@@ -54,6 +61,10 @@
             <form action="/includes/signup.inc.php" method="post" id="signupForm">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                 <h2>Create your Account</h2>
+                <label>
+                    <span>Username</span>
+                    <input type="text" name="username" maxlength="50"/>
+                </label>
                 <label>
                     <span>Email</span>
                     <input type="email" name="email"/>

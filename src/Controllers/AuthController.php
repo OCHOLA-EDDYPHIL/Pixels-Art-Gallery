@@ -26,12 +26,14 @@ final class AuthController extends BaseController
 
         $loginErrors = $_SESSION['login_errors'] ?? [];
         $signupErrors = $_SESSION['signup_errors'] ?? [];
-        unset($_SESSION['login_errors'], $_SESSION['signup_errors']);
+        $signupSuccess = $_SESSION['signup_success'] ?? null;
+        unset($_SESSION['login_errors'], $_SESSION['signup_errors'], $_SESSION['signup_success']);
 
         return Response::html($this->render('auth/login', [
             'csrfToken' => Csrf::token(),
             'loginErrors' => $loginErrors,
             'signupErrors' => $signupErrors,
+            'signupSuccess' => $signupSuccess,
         ]));
     }
 
@@ -64,13 +66,17 @@ final class AuthController extends BaseController
             return Response::text('Invalid CSRF token', 403);
         }
 
-        $errors = ($this->authFactory)()->signup(trim((string) ($input['email'] ?? '')), (string) ($input['pwd'] ?? ''));
+        $errors = ($this->authFactory)()->signup(
+            trim((string) ($input['email'] ?? '')),
+            (string) ($input['pwd'] ?? ''),
+            (string) ($input['username'] ?? '')
+        );
         if (!empty($errors)) {
             $_SESSION['signup_errors'] = $errors;
             return Response::redirect('/index.php');
         }
 
-        $_SESSION['signup_success'] = 'true';
+        $_SESSION['signup_success'] = 'Account created successfully. You can now sign in.';
         return Response::redirect('/index.php');
     }
 
