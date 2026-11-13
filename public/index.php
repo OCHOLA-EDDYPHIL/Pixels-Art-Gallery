@@ -66,7 +66,23 @@ function staticResponse(string $rootPath, string $uri): ?Response
             return Response::text('Not found', 404);
         }
 
-        $mimeType = mime_content_type($realFile) ?: 'application/octet-stream';
+        // Serve web assets with correct MIME types. mime_content_type() reports
+        // text/plain for .css/.js, which browsers refuse to apply under strict
+        // MIME checking, so map common extensions explicitly.
+        $extensionTypes = [
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'ico' => 'image/x-icon',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+        ];
+        $extension = strtolower(pathinfo($realFile, PATHINFO_EXTENSION));
+        $mimeType = $extensionTypes[$extension] ?? (mime_content_type($realFile) ?: 'application/octet-stream');
         return new Response((string) file_get_contents($realFile), 200, ['Content-Type' => $mimeType]);
     }
 
